@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>TtT</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script type="text/javascript" src="processing.js"></script>
+<script type="text/javascript">
+var term = "";
+function getTerm() { return term; }
+function setTerm() { term = document.getElementById("term").value; }
+</script>
+</head>
+
+<body>
+<h1>TtT (Terms to Transducers)</h1>
+<p>This is a simulation tool of the
+<a href="http://dl.acm.org/citation.cfm?doid=2603088.2603124">
+<em>memoryful GoI</em></a>
+framework.<br>
+Implemented by
+<a href="http://www-mmm.is.s.u-tokyo.ac.jp/~koko/">
+Koko Muroya</a>,
+using
+<a href="http://processingjs.org/">Processing.js</a> v1.4.8.
+</p>
+
+<div id="box">
+Term:
+<input type="text" id="term" value="(\x.x+x) choice(0.4, 3, 5)"
+size="100">
+<input type="button" value="simulate" onclick="setTerm();">
+</div>
+<br>
+<div id="canvas">
+<!--
+<canvas datasrc="main.pde" width="800" height="800"></canvas>
+-->
+<canvas datasrc="main.pde">
+Sorry, please try another browser that supports Canvas :(
+</canvas>
+</div>
+</body>
+</html>
