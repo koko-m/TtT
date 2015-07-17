@@ -5,10 +5,15 @@
 <title>TtT</title>
 <link rel="stylesheet" type="text/css" href="style.css">
 <script type="text/javascript" src="processing.js"></script>
+<script type="text/javascript" src="peg-0.8.0.min.js"></script>
 <script type="text/javascript">
+var parser =
+PEG.buildParser("start = string:('a'/'b')+ {return string.join('');}");
 var term = "";
 function getTerm() { return term; }
-function setTerm() { term = document.getElementById("term").value; }
+function setTerm() {
+term = parser.parse(document.getElementById("term").value);
+}
 </script>
 </head>
 
@@ -22,7 +27,8 @@ Implemented by
 <a href="http://www-mmm.is.s.u-tokyo.ac.jp/~koko/">
 Koko Muroya</a>,
 using
-<a href="http://processingjs.org/">Processing.js</a> v1.4.8.
+<a href="http://processingjs.org/">Processing.js</a> v1.4.8 and
+<a href="http://pegjs.org/">PEG.js</a> v0.8.0.
 </p>
 
 <div id="box">

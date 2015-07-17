@@ -26,5 +26,6 @@ See also my webpage http://www-mmm.is.s.u-tokyo.ac.jp/~koko/ .
 
 ## License
 This tool is licensed under the MIT License.
-It includes Processing.js that is also under the MIT License.
+It includes [Processing.js](http://processingjs.org) and
+[PEG.js](http://pegjs.org/) that are also under the MIT License.
 See LICENSE for details.
