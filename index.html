@@ -6,14 +6,16 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <script type="text/javascript" src="processing.js"></script>
 <script type="text/javascript" src="peg-0.8.0.min.js"></script>
+<script type="text/javascript" src="grammar.js"></script>
 <script type="text/javascript">
-var parser =
-PEG.buildParser("start = string:('a'/'b')+ {return string.join('');}");
+var parser = PEG.buildParser(grammar);
+
 var term = "";
 function getTerm() { return term; }
 function setTerm() {
-term = parser.parse(document.getElementById("term").value);
-}
+parsed = parser.parse(document.getElementById("term").value);
+term = parsed.print;
+};
 </script>
 </head>
 
@@ -33,7 +35,8 @@ using
 
 <div id="box">
 Term:
-<input type="text" id="term" value="(\x.x+x) choice(0.4, 3, 5)"
+<input type="text" id="term" value=
+"((lambda(x)(+ x x)) (choose(0.4)3 5))"
 size="100">
 <input type="button" value="simulate" onclick="setTerm();">
 </div>
