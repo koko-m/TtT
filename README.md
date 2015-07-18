@@ -14,6 +14,30 @@ how a token moves around the diagram.
 ## Usage
 (To appear.)
 
+### Accepted Terms
+This tool adopts a Scheme-like grammar.
+
+    <var> := {variables}
+    <nat> := {natural numbers}
+    <prob> := {real numbers in the unit interval [0,1]}
+    <expr> ::= <var>  # variables
+             | <nat>  # natural numbers
+             | *      # the unit value
+             | (lambda (<var>) <expr>)     # abstraction
+             | (rec (<var> <var>) <expr>)  # recursion
+             | (<expr> <expr>)             # application
+             | (choose (<prob>) <expr> <expr>)
+               # probabilistic choice
+               ## the left term executed with probability <prob>
+               ## the right term executed with probability 1 - <prob>
+             | (car <expr>) | (cdr <expr>) | (cons <expr> <expr>)
+               # pairs (product types)
+             | (inl <expr>) | (inr <expr>)
+             | (match <expr> ((inl <var>) <expr>) ((inr <expr>) <expr>))
+               # pattern match (coproduct types)
+             | (+ <expr> <expr>)
+               # summation (arithmetic primitive)
+
 ## References
 - Naohiko Hoshino, Koko Muroya and Ichiro Hasuo. **Memoryful Geometry
 of Interaction: from coalgebraic components to algebraic effects**. In

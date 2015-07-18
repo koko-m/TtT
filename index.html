@@ -14,7 +14,7 @@ var term = "";
 function getTerm() { return term; }
 function setTerm() {
 parsed = parser.parse(document.getElementById("term").value);
-term = parsed.print;
+term = parsed.print();
 };
 </script>
 </head>

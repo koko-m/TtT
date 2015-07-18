@@ -1,157 +1,97 @@
-/* term constructions */
+/* term constructors */
 
-// core fragments
-
-var Var = function (name) {
-    this.type = "Var";
-    this.name = name;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.name + " " + this.env
-	+ ")";
-}
-
-var Abs = function (arg, body) {
-    this.type = "Abs";
-    this.arg = arg;
+function Base (type, body) {
+    this.type = type;
     this.body = body;
     this.env = [];
-    this.print = "(" + this.type + " " + this.arg + " "
-	+ this.body.print + " " + this.env + ")";
+}
+Base.prototype.print = function () {
+    return "(" + this.type + " " + this.body + " " + this.env + ")";
 }
 
-var Rec = function (name, arg, body) {
-    this.type = "Rec";
-    this.name = name;
-    this.arg = arg;
-    this.body = body;
+function Composed (operation, parameters, args) {
+    this.operation = operation;
+    this.parameters = parameters;
+    this.args = args;
     this.env = [];
-    this.print = "(" + this.type + " " + this.name + " " + this.arg
-	+ " " + this.body.print + " " + this.env + ")";
 }
-
-// probabilistic choice
-
-var Choose = function (prob, left, right) {
-    this.type = "Choose";
-    this.prob = prob;
-    this.left = left;
-    this.right = right;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.prob + " "
-	+ this.left.print + " "	+ this.right.print + " "
-	+ this.env + ")";
-}
-
-// product types
-
-var Unit = function (env) {
-    this.type = "Unit";
-    this.env = [];
-    this.print = "(" + this.type + " " + this.env + ")";
-}
-
-var Fst = function (body) {
-    this.type = "Fst";
-    this.body = body;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.body.print + " "
-	+ this.env + ")";
-}
-
-var Snd = function (body) {
-    this.type = "Snd";
-    this.body = body;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.body.print + " "
-	+ this.env + ")";
-}
-
-var Pair = function (left, right) {
-    this.type = "Pair";
-    this.left = left;
-    this.right = right;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.left.print + " "
-	+ this.right.print + " " + this.env + ")";
-}
-
-// coproduct types
-
-var Inl = function (body) {
-    this.type = "Inl";
-    this.body = body;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.body.print + " "
-	+ this.env + ")";
-}
-
-var Inr = function (body) {
-    this.type = "Inr";
-    this.body = body;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.body.print + " "
-	+ this.env + ")";
-}
-
-var Case = function (pat, varL, left, varR, right) {
-    this.type = "Case";
-    this.pat = pat;
-    this.varL = varL;
-    this.left = left;
-    this.varR = varR;
-    this.right = right;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.pat.print + " "
-	+ this.varL + " " + this.left.print + " " + this.varR
-	+ " " + this.right.print + " " + this.env + ")";
-}
-
-// arithmetic primitives
-
-var Nat = function (nat) {
-    this.type = "Nat";
-    this.nat = nat;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.nat + " " + this.env
-	+ ")";
-}
-
-var Sum = function (left, right) {
-    this.type = "Sum";
-    this.left = left;
-    this.right = right;
-    this.env = [];
-    this.print = "(" + this.type + " " + this.left.print + " "
-	+ this.right.print + " " + this.env + ")";
+Composed.prototype.print = function () {
+    var str = "(" + this.operation + " " + this.parameters;
+    for (var i = 0; i < this.args.length; i++) {
+	str += " " + this.args[i].print();
+    }
+    return  str + " " + this.env + ")";
 }
 
 /* PEG Rules */
 
 var rules = [
     "start = expr",
-    "lpar = '('",
-    "rpar = ')'",
+    // spaces
     "spS = ' '*",
     "spP = ' '+",
-    "expr = var / const / abs / rec / choose",
-    "//     / car / cdr / cons",
-    "//     / inl / inr / match / sum",
-    "//     / app",
-    "varRaw = str:[a-z/A-Z]+ {return str.join('');}",
-    "var = str:varRaw {return new Var(str);}",
-    "const = '*' {return new Unit();}",
-    "      / nat:[0-9]+ {return new Nat(parseInt(nat, 10));}",
-    "abs = lpar spS 'lambda' spS lpar spS arg:varRaw spS rpar spS",
-    "      body:expr spS rpar {return new Abs(arg, body);}",
-    "rec = lpar spS 'rec' spS lpar spS name:varRaw spP arg:varRaw",
-    "      spS rpar spS body:expr spS rpar",
-    "      {return new Rec(name, arg, body);}",
-    "choose = lpar spS 'choose' spS lpar spS prob:prob spS rpar spS",
-    "         left:expr spP right:expr spS rpar",
-    "         {return new Choose(prob, left, right);}",
-    "prob = '0.' frac:[0-9]* {return parseFloat(text());}",
+    // terms (expressions)
+    "expr = base / composed",
+    "base = var / const",
+    "composed =  abs / rec / choose",
+    "         / car / cdr / cons",
+    "         / inl / inr / match / sum",
+    "         / app",
+    // base
+    "varRaw = [a-z/A-Z]+ {return text();}",
+    "var = str:varRaw {return new Base('Var', str);}",
+    "const = '*' {return new Base('Unit', '*');}",
+    "      / [0-9]+ {return new Base('Nat', parseInt(text(), 10));}",
+    // composed
+    "abs = '(' spS 'lambda' spS '(' spS bvar:varRaw spS ')' spS",
+    "      body:expr spS ')'",	// one bounded variable only
+    "      {return new Composed('Abs', [bvar], [body]);}",
+    "rec = '(' spS 'rec' spS '(' spS name:varRaw spP bvar:varRaw",
+    "      spS ')' spS body:expr spS ')'", // one bounded var. only
+    "      {return new Composed('Rec', [name, bvar], [body]);}",
+    "choose = '(' spS 'choose' spS '(' spS prob:prob spS ')' spS",
+    "         args:arg2 spS ')'",
+    "         {return new Composed('Choose', [prob], args);}",
+    "prob = '0.' [0-9]* {return parseFloat(text());}",
+    "     / '1.' '0'* {return 1;}",
     "     / '0' {return 0;}",
-    "     / '1' {return 1;}"
+    "     / '1' {return 1;}",
+    // composed: product types
+    "car = '(' spS 'car' arg:argSp1 spS ')'",
+    "      {return new Composed('Car', [], arg);}",
+    "cdr = '(' spS 'cdr' arg:argSp1 spS ')'",
+    "      {return new Composed('Cdr', [], arg);}",
+    "cons = '(' spS 'cons' args:argSp2 spS ')'",
+    "       {return new Composed('Cons', [], args);}",
+    // composed: coproduct types
+    "inl = '(' spS 'inl' arg:argSp1 spS ')'",
+    "      {return new Composed('Inl', [], arg);}",
+    "inr = '(' spS 'inr' arg:argSp1 spS ')'",
+    "      {return new Composed('Inr', [], arg);}",
+    "match = '(' spS 'match' pat:argSp1 spS",
+    "        '(' spS '(' spS 'inl' spP varL:varRaw spS ')'",
+    "        spS left:expr spS ')' spS",
+    "        '(' spS '(' spS 'inr' spP varR:varRaw spS ')'",
+    "        spS right:expr spS ')' spS ')'",
+    "        {return new Composed('Match', [varL, varR],",
+    "                             pat.concat([left, right]));}",
+    // composed
+    "sum = '(' spS '+' args:argSp2 spS ')'",
+    "      {return new Composed('Sum', [], args);}",
+    // composed
+    "app = '(' spS args:arg2 spS ')'",
+    "      {return new Composed('App', [], args);}",
+    // for arguments
+    "arg2 = left:base spP right:base {return [left, right];}",
+    "     / left:base spS right:composed {return [left, right];}",
+    "     / left:composed spS right:expr {return [left, right];}",
+    "argSp1 = spP body:base {return [body];}",
+    "       / spS body:composed {return [body];}",
+    "argSp2 = spP left:base spP right:base {return [left, right];}",
+    "       / spP left:base spS right:composed",
+    "         {return [left, right];}",
+    "       / spS left:composed spS right:expr",
+    "         {return [left, right];}"
 ];
 
 var grammar = rules.join("\n");
