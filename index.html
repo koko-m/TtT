@@ -7,16 +7,7 @@
 <script type="text/javascript" src="processing.js"></script>
 <script type="text/javascript" src="peg-0.8.0.min.js"></script>
 <script type="text/javascript" src="grammar.js"></script>
-<script type="text/javascript">
-var parser = PEG.buildParser(grammar);
-
-var term = "";
-function getTerm() { return term; }
-function setTerm() {
-parsed = parser.parse(document.getElementById("term").value);
-term = parsed.print();
-};
-</script>
+<script type="text/javascript" src="parse.js"></script>
 </head>
 
 <body>
@@ -38,7 +29,7 @@ Term:
 <input type="text" id="term" value=
 "((lambda(x)(+ x x)) (choose(0.4)3 5))"
 size="100">
-<input type="button" value="simulate" onclick="setTerm();">
+<input type="button" value="simulate" onclick="setParsedTerm();">
 </div>
 <br>
 <div id="canvas">

@@ -1,26 +1,52 @@
-/* term constructors */
+/* term constructor */
 
-function Base (type, body) {
-    this.type = type;
-    this.body = body;
-    this.env = [];
-}
-Base.prototype.print = function () {
-    return "(" + this.type + " " + this.body + " " + this.env + ")";
-}
-
-function Composed (operation, parameters, args) {
-    this.operation = operation;
+function Term (tag, parameters, bodies) {
+    this.tag = tag;
     this.parameters = parameters;
-    this.args = args;
-    this.env = [];
+    this.bodies = bodies;
 }
-Composed.prototype.print = function () {
-    var str = "(" + this.operation + " " + this.parameters;
-    for (var i = 0; i < this.args.length; i++) {
-	str += " " + this.args[i].print();
+Term.prototype.print = function () {
+    var str = "(" + this.tag + " " + this.parameters;
+    for (var i = 0; i < this.bodies.length; i++) {
+	str += " " + this.bodies[i].print();
     }
-    return  str + " " + this.env + ")";
+    return  str + ")";
+}
+Term.prototype.prettyPrint = function () {
+    switch (this.tag) {
+    case "var": case "nat": return this.parameters[0]; break;
+    case "unit": return "*"; break;
+    case "match":
+	return "(match " + this.bodies[0].prettyPrint()
+	    + " ((inl " + this.parameters[0] + ") "
+	    + this.bodies[1].prettyPrint() + ")"
+	    + " ((inr " + this.parameters[1] + ") "
+	    + this.bodies[2].prettyPrint() + "))";
+	break;
+    case "app":
+	return "("
+	    + this.bodies.map(function(t){return t.prettyPrint();})
+	    .join(" ")
+	    + ")";
+	break;
+    default:
+	if (this.parameters.length == 0) {
+	    return "(" + this.tag.toLowerCase() + " "
+		+ this.bodies.map(function(t){
+		    return t.prettyPrint();
+		}).join(" ")
+		+ ")";
+	    break;
+	} else {
+	    return "(" + this.tag.toLowerCase() + "("
+		+ this.parameters.join(" ") + ")"
+		+ this.bodies.map(function(t){
+		    return t.prettyPrint();
+		}).join(" ")
+		+ ")";
+	    break;
+	}
+    }
 }
 
 /* PEG Rules */
@@ -33,54 +59,56 @@ var rules = [
     // terms (expressions)
     "expr = base / composed",
     "base = var / const",
-    "composed =  abs / rec / choose",
+    "composed =  lambda / rec / choose",
     "         / car / cdr / cons",
     "         / inl / inr / match / sum",
     "         / app",
-    // base
+    // variables & constants
     "varRaw = [a-z/A-Z]+ {return text();}",
-    "var = str:varRaw {return new Base('Var', str);}",
-    "const = '*' {return new Base('Unit', '*');}",
-    "      / [0-9]+ {return new Base('Nat', parseInt(text(), 10));}",
-    // composed
-    "abs = '(' spS 'lambda' spS '(' spS bvar:varRaw spS ')' spS",
+    "var = str:varRaw {return new Term('var', [str], []);}",
+    "const = '*' {return new Term('unit', ['*'], []);}",
+    "      / [0-9]+",
+    "        {return new Term('nat', [parseInt(text(), 10)], []);}",
+    // functions
+    "lambda = '(' spS 'lambda' spS '(' spS bvar:varRaw spS ')' spS",
     "      body:expr spS ')'",	// one bounded variable only
-    "      {return new Composed('Abs', [bvar], [body]);}",
+    "      {return new Term('lambda', [bvar], [body]);}",
     "rec = '(' spS 'rec' spS '(' spS name:varRaw spP bvar:varRaw",
     "      spS ')' spS body:expr spS ')'", // one bounded var. only
-    "      {return new Composed('Rec', [name, bvar], [body]);}",
+    "      {return new Term('rec', [name, bvar], [body]);}",
+    // probabilistic choice
     "choose = '(' spS 'choose' spS '(' spS prob:prob spS ')' spS",
     "         args:arg2 spS ')'",
-    "         {return new Composed('Choose', [prob], args);}",
+    "         {return new Term('choose', [prob], args);}",
     "prob = '0.' [0-9]* {return parseFloat(text());}",
     "     / '1.' '0'* {return 1;}",
     "     / '0' {return 0;}",
     "     / '1' {return 1;}",
-    // composed: product types
+    // pairs (product types)
     "car = '(' spS 'car' arg:argSp1 spS ')'",
-    "      {return new Composed('Car', [], arg);}",
+    "      {return new Term('car', [], arg);}",
     "cdr = '(' spS 'cdr' arg:argSp1 spS ')'",
-    "      {return new Composed('Cdr', [], arg);}",
+    "      {return new Term('cdr', [], arg);}",
     "cons = '(' spS 'cons' args:argSp2 spS ')'",
-    "       {return new Composed('Cons', [], args);}",
-    // composed: coproduct types
+    "       {return new Term('cons', [], args);}",
+    // pattern match (coproduct types)
     "inl = '(' spS 'inl' arg:argSp1 spS ')'",
-    "      {return new Composed('Inl', [], arg);}",
+    "      {return new Term('inl', [], arg);}",
     "inr = '(' spS 'inr' arg:argSp1 spS ')'",
-    "      {return new Composed('Inr', [], arg);}",
+    "      {return new Term('inr', [], arg);}",
     "match = '(' spS 'match' pat:argSp1 spS",
     "        '(' spS '(' spS 'inl' spP varL:varRaw spS ')'",
     "        spS left:expr spS ')' spS",
     "        '(' spS '(' spS 'inr' spP varR:varRaw spS ')'",
     "        spS right:expr spS ')' spS ')'",
-    "        {return new Composed('Match', [varL, varR],",
+    "        {return new Term('match', [varL, varR],",
     "                             pat.concat([left, right]));}",
-    // composed
+    // summation (arithmetic primitive)
     "sum = '(' spS '+' args:argSp2 spS ')'",
-    "      {return new Composed('Sum', [], args);}",
-    // composed
+    "      {return new Term('+', [], args);}",
+    // application
     "app = '(' spS args:arg2 spS ')'",
-    "      {return new Composed('App', [], args);}",
+    "      {return new Term('app', [], args);}",
     // for arguments
     "arg2 = left:base spP right:base {return [left, right];}",
     "     / left:base spS right:composed {return [left, right];}",

@@ -11,9 +11,13 @@ int x = 1000;
 void draw () {
   background(#b3adaa);
   text("Click to pause/restart!", 100, 80);
-  text(getTerm(), x, 500);
-  x -= 5;
-  if (x < -200) x = 1000;
+  if (isParsed()) {
+    text(getParsedTerm().print(), 100, 120);
+    text(getParsedTerm().prettyPrint(), 100, 140);
+    text("Hey hey!", x, 500);
+    x -= 5;
+    if (x < -200) x = 1000;
+  }
   text(count++,100,100);
 }
 
