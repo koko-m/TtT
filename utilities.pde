@@ -29,11 +29,54 @@ void drawNamedRect (String name,
   fill(#ffffff);
 }
 
+void drawDashedRect (float centerX, float centerY,
+                     float rectWidth, float rectHeight) {
+  noFill();
+  rect(centerX, centerY, rectWidth, rectHeight);
+  fill(#ffffff);
+  /*
+  float x = centerX - rectWidth / 2;
+  float y = centerY - rectHeight / 2;
+  float distance = DASHED_ON_INTERVAL;
+  boolean on = true;
+  // from the top-left corner to the bottom-left corner
+  while (distance <= rectHeight) {
+    if (on) {
+      line(x, y, x, y + DASHED_ON_INTERVAL);
+      on = false;
+      distance += DASHED_OFF_INTERVAL;
+    } else {
+      on = true;
+      distance += DASHED_ON_INTERVAL;
+    }
+  }
+  float rest = distance - rectHeight; // must be positive
+  if (on) {
+    line(x, y, x, y + DASHED_ON_INTERVAL - rest);
+  } else {
+  }
+  */
+}
+
 void drawPrimitiveTdPair (String nameLower, String nameUpper,
                           float centerX, float centerY,
                           float rectWidth, float rectHeight) {
   drawNamedRect(nameLower, centerX, centerY, rectWidth, rectHeight);
   drawNamedRect(nameUpper, centerX, -centerY, rectWidth, rectHeight);
+}
+
+void drawPsiPhi (float leftX, float rightX, float centerY) {
+  triangle((leftX + rightX) / 2, centerY + 5,
+           leftX - 5, centerY - 5, rightX + 5, centerY - 5);
+  triangle((leftX + rightX) / 2, -centerY - 5,
+           leftX - 5, -centerY + 5, rightX + 5, -centerY + 5);
+}
+
+void drawPhiPsi (float leftX, float rightX, float centerY) {
+  triangle((leftX + rightX) / 2, centerY - 5,
+           leftX - 5, centerY + 5, rightX + 5, centerY + 5);
+  triangle((leftX + rightX) / 2, -centerY + 5,
+           leftX - 5, -centerY - 5, rightX + 5, -centerY - 5);
 }
 
 void drawPaths (float[] path) {
