@@ -41,14 +41,6 @@ void drawLines (float x1, float y1, float x2, float y2) {
   line(x1, -y1, x2, -y2);
 }
 
-void drawVerticalLines (float x, float y1, float y2) {
-  return drawLines(x, y1, x, y2);
-}
-
-void drawHorizontalLines (float x1, float x2, float y) {
-  return drawLines(x1, y, x2, y);
-}
-
 void drawTermBox (String name,
                   float rectWidth, float rectHeight) {
   stroke(#ffffff);
@@ -64,27 +56,22 @@ void drawTermBox (String name,
   popMatrix();
 }
 
-void drawPorts (float tdHeight,
-                float[] tdPorts, String[] freeVars, String name) {
-  // String[] portNames = append(freeVars, name);
-  // // This changes freeVars!!
-  // if (tdPorts.length != portNames.length) return;
+void drawPorts (float tdHeight, float[] tdPorts, String[] freeVars) {
   if (tdPorts.length != freeVars.length + 1) return;
   textSize(10);
-  for (i = 0; i < tdPorts.length; i++) {
-    String str = (i == freeVars.length) ? name : freeVars[i];
+  for (i = 0; i < freeVars.length; i++) {
     pushMatrix();
-    translate(tdPorts[i], tdHeight);
+    translate(tdPorts[i], tdHeight + NAME_MARGIN_HALF);
     rotate(HALF_PI);
     textAlign(LEFT, BOTTOM);
-    text(str, 0, 0);
+    text(freeVars[i], 0, 0);
     popMatrix();
 
     pushMatrix();
-    translate(tdPorts[i], -tdHeight);
+    translate(tdPorts[i], -tdHeight - NAME_MARGIN_HALF);
     rotate(HALF_PI);
     textAlign(RIGHT, BOTTOM);
-    text(str, 0, 0);
+    text(freeVars[i], 0, 0);
     popMatrix();
   }
   textSize(12);
