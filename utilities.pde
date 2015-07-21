@@ -36,9 +36,13 @@ void drawPrimitiveTdPair (String nameLower, String nameUpper,
   drawNamedRect(nameUpper, centerX, -centerY, rectWidth, rectHeight);
 }
 
-void drawLines (float x1, float y1, float x2, float y2) {
-  line(x1, y1, x2, y2);
-  line(x1, -y1, x2, -y2);
+void drawPaths (float[] path) {
+  for (int i = 0; i < path.length / 2 - 1; i++) {
+    line(path[2 * i], path[2 * i + 1],
+         path[2 * (i + 1)], path[2 * (i + 1) + 1]);
+    line(path[2 * i], -path[2 * i + 1],
+         path[2 * (i + 1)], -path[2 * (i + 1) + 1]);
+  }
 }
 
 void drawTermBox (String name,

@@ -10,6 +10,7 @@ DrawTd getDrawTd (Object parsedTerm, String[] freeVars) {
   switch (parsedTerm.tag) {
   case "var": drawTd = getDrawVarTd(parsedTerm, freeVars); break;
   case "nat": drawTd = getDrawNatTd(parsedTerm, freeVars); break;
+  case "unit": drawTd = getDrawUnitTd(parsedTerm, freeVars); break;
   }
   return drawTd;
 }
@@ -55,15 +56,14 @@ DrawTd getDrawVarTd (Object parsedTerm, String[] freeVars) {
       else {
         drawPorts(tdHeight, tdPorts, freeVars);
         drawNamedRect("h", 10, 0, 20, 10);
-        drawLines(5, tdHeight, 5, 5);
+        drawPaths({5, tdHeight, 5, 5});
         for (int i = 0; i < numFreeVars; i++) {
           if (i == index) {     // term (variable) itself
             if (i == numFreeVars - 1) { // the last of freeVars
-              drawLines(tdPorts[i], tdHeight, tdPorts[i], 5);
+              drawPaths({tdPorts[i], tdHeight, tdPorts[i], 5});
             } else {
-              drawLines(tdPorts[i], tdHeight, tdPorts[i], 10);
-              drawLines(tdPorts[i], 10, 15, 10);
-              drawLines(15, 10, 15, 5);
+              drawPaths({tdPorts[i], tdHeight, tdPorts[i], 10,
+                    15, 10, 15, 5});
             }
           } else {              // free variables
             drawPrimitiveTdPair("w'", "w", tdPorts[i], tdHeight - 5,
@@ -104,15 +104,43 @@ DrawTd getDrawNatTd (Object parsedTerm, String[] freeVars) {
       drawNamedRect("h", hWidth / 2, 0, hWidth, 10);
       drawNamedRect("k" + name, hWidth + CROSS_MARGIN + kWidth / 2, 0,
                     kWidth, 10);
-      drawLines(5, tdHeight, 5, 5);
-      drawLines(15, -5, 15, -10);
-      drawLines(15, -10, 20 + CROSS_PADDING_HALF, -10);
-      drawLines(20 + CROSS_PADDING_HALF, -10,
-                20 + CROSS_MARGIN - CROSS_PADDING_HALF, 10);
-      drawLines(20 + CROSS_MARGIN - CROSS_PADDING_HALF, 10,
-                20 + CROSS_MARGIN + kWidth / 2, 10);
-      drawLines(20 + CROSS_MARGIN + kWidth / 2, 10,
-                20 + CROSS_MARGIN + kWidth / 2, 5);
+      drawPaths({5, tdHeight, 5, 5});
+      drawPaths({15, -5, 15, -10, 20 + CROSS_PADDING_HALF, -10,
+            20 + CROSS_MARGIN - CROSS_PADDING_HALF, 10,
+            20 + CROSS_MARGIN + kWidth / 2, 10,
+            20 + CROSS_MARGIN + kWidth / 2, 5});
+      for (int i = 0; i < numFreeVars; i++) {
+        drawPrimitiveTdPair("w'", "w", tdPorts[i], tdHeight - 5,
+                            10, 10);
+      }
+      popMatrix();
+    }
+  }
+}
+
+DrawTd getDrawUnitTd (Object parsedTerm, String[] freeVars) {
+  int numFreeVars = freeVars.length;
+  String name = parsedTerm.prettyPrint();
+  float tdWidth = 25 + 15 * numFreeVars;
+  float tdHeight = max(textWidth(name) / 2 + NAME_MARGIN_HALF, 15);
+  String[] tdPorts = new float[numFreeVars + 1];
+  for (int i = 0; i < numFreeVars; i++) {
+    tdPorts[i] = tdWidth - 5 - 15 * i;
+  }
+  tdPorts[numFreeVars] = 5;
+  return new DrawTd() {
+    float getTdWidth () { return tdWidth; }
+    float getTdHeight () { return tdHeight; }
+    float[] getTdPorts () { return tdPorts; }
+    void go () {
+      pushMatrix();
+      translate(0, CENTER_Y);
+      drawTermBox(name, TERMBOX_MARGIN_LR + tdWidth, tdHeight * 2);
+      translate(TERMBOX_MARGIN_LEFT, 0);
+      drawPorts(tdHeight, tdPorts, freeVars);
+      drawNamedRect("h", 10, 0, 20, 10);
+      drawPaths({5, tdHeight, 5, 5});
+      drawPaths({15, -5, 15, -10, 25, -10, 25, 0});
       for (int i = 0; i < numFreeVars; i++) {
         drawPrimitiveTdPair("w'", "w", tdPorts[i], tdHeight - 5,
                             10, 10);

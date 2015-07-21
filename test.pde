@@ -7,7 +7,7 @@ void testPrint (Object parsedTerm) {
 void testDraw (Object parsedTerm) {
   switch (parsedTerm.tag) {
   case "var": testDrawVarTd(parsedTerm); break;
-  case "nat": testDrawNatTd(parsedTerm); break;
+  case "nat": case "unit": testDrawValueTd(parsedTerm); break;
   }
 }
 
@@ -52,7 +52,7 @@ void testDrawVarTd (Object parsedTerm) {
   popMatrix();
 }
 
-void testDrawNatTd (Object parsedTerm) {
+void testDrawValueTd (Object parsedTerm) {
   pushMatrix();
   DrawTd drawTd;
   // FV = {"xx", "yy"}
