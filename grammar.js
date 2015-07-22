@@ -4,17 +4,19 @@ function Term (tag, parameters, bodies) {
     this.tag = tag;
     this.parameters = parameters;
     this.bodies = bodies;
+    this.freeVars = [];
 }
 Term.prototype.print = function () {
     var str = "(" + this.tag + " " + this.parameters;
     for (var i = 0; i < this.bodies.length; i++) {
 	str += " " + this.bodies[i].print();
     }
-    return  str + ")";
+    return  str + " [" + this.freeVars + "])";
 }
 Term.prototype.prettyPrint = function () {
     switch (this.tag) {
-    case "var": case "nat": return this.parameters[0]; break;
+    case "var": return this.freeVars[this.parameters[0]]; break;
+    case "nat": return this.parameters[0]; break;
     case "unit": return "*"; break;
     case "match":
 	return "(match " + this.bodies[0].prettyPrint()

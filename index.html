@@ -24,14 +24,19 @@ using
 <a href="http://pegjs.org/">PEG.js</a> v0.8.0.
 </p>
 
-<div id="box">
+<p>
+<div id="input">
 Term:
 <input type="text" id="term" value=
 "((lambda(x)(+ x x)) (choose(0.4)3 5))"
 size="100">
-<input type="button" value="simulate" onclick="setParsedTerm();">
+<font color="red" id="errMsg"></font>
 </div>
-<br>
+<div id="buttons">
+<input type="button" value="simulate" onclick="setTerm();">
+</div>
+</p>
+
 <div id="canvas">
 <!--
 <canvas datasrc="main.pde" width="800" height="800"></canvas>
