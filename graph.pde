@@ -1,63 +1,95 @@
 // data for a graph
 
 class Graph {
-  Wire[] wires;
+  Port[] ports;
   Box[] boxes;
 
   Graph () {
-    this.wires = new Wire[0];
+    this.ports = new Port[0];
     this.boxes = new Box[0];
   }
-
-  int addWire (Wire wire) {
-    this.wires = append(this.wires, wire);
-    return this.wires.length;
+  
+  int addPort (Port newPort) {
+    this.ports = append(this.ports, newPort);
+    return this.ports.length - 1;
   }
 
   int addBox (Box newBox) {
     this.boxed = append(this.boxes, newBox);
-    return this.boxed.length;
+    return this.boxed.length - 1;
+  }
+
+  void connectPorts (int sourcePortIndex, int[] targetPortIndexes) {
+    this.ports[sourcePortIndex].addNextPortIndexes(targetPortIndexes);
+  }
+
+  Port getPort (int index) {
+    return this.ports[index];
+  }
+  
+  void drawAll () {
+    for (int i = 0; i < ports.length; i++) {
+      Port p = this.ports[i];
+      if (p.visible) {
+        for (int j = 0; j < p.nextPortIndexes.length; j++) {
+          stroke(#000000);
+          line(p.x, p.y,
+               this.ports[p.nextPortIndexes[j]].x,
+               this.ports[p.nextPortIndexes[j]].y);
+        }
+      }
+      this.ports[i].drawName();
+    }
+    for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
   }
 }
 
-class Wire {
-  float srcX, srcY;             // source coordinates
-  float dirX, dirY;             // directional vector whose length is
-                                // that of the wire
-  // float length;
-  // // can be calculated by mag(dirX, dirY)
-  boolean enter;
-  String portName;
-  Wire[] nextWires;
+// boolean constants to specify whether to draw outgoing edges
+boolean VISIBLE = true;
+boolean HIDDEN = false;
 
-  Wire (float srcX, float srcY, float dirX, float dirY,
-        boolean enter, String portName) {
-    this.srcX = srcX;
-    this.srcY = srcY;
-    this.dirX = dirX;
-    this.dirY = dirY;
-    this.enter = enter;
-    this.portName = portName;
-    this.nextWires = new Wire[0];
+class Port {
+  float x;
+  float y;
+  int[] nextPortIndexes;
+  boolean visible;
+  String name;
+
+  Port (float x, float y, boolean visible, String name) {
+    this.x = x;
+    this.y = y;
+    this.nextPortIndexes = new int[0];
+    this.visible = visible;
+    this.name = name;
   }
 
-  void addNextWire (Wire wire) {
-    this.nextWires = append(this.nextWires, wire);
+  Port (float x, float y, boolean visible) {
+    this(x, y, visible, null);  // no name
   }
 
-  void draw () {
-    stroke(#000000);
-    line(srcX, srcY, srcX + dirX, srcY + dirY);
-    if (portName != null) {
+  // Port (float x, float y, String name) {
+  //   this(x, y, VISIBLE, name);
+  // }
+
+  Port (float x, float y) {
+    this(x, y, VISIBLE, null);
+  }
+
+  void addNextPortIndexes (int[] portIndexes) {
+    this.nextPortIndexes = concat(this.nextPortIndexes, portIndexes);
+  }
+
+  void drawName () {
+    if (this.name != null) {
       fill(#ffffff);
-      if (this.enter) textAlign(LEFT, BOTTOM);
-      else textAlign(RIGHT, BOTTOM);
+      if (this.y > 0) textAlign(LEFT, BOTTOM);
+      if (this.y < 0) textAlign(RIGHT, BOTTOM);
       textSize(TEXT_SIZE_PORT);
       pushMatrix();
-      if (this.enter) translate(srcX, srcY + TEXT_MARGIN);
-      else translate(srcX, srcY - TEXT_MARGIN);
+      if (this.y > 0) translate(this.x, this.y + TEXT_MARGIN);
+      if (this.y < 0) translate(this.x, this.y - TEXT_MARGIN);
       rotate(HALF_PI);
-      text(portName, 0, 0);
+      text(this.name, 0, 0);
       popMatrix();
     }
   }
@@ -93,23 +125,23 @@ class Box {
   }
 
   void draw () {
-    float centerX = leftX + boxWidth / 2;
-    float centerY = bottomY - boxHeight / 2;
+    float centerX = this.leftX + this.boxWidth / 2;
+    float centerY = this.bottomY - this.boxHeight / 2;
     switch (this.type) {
     case LABELED_RECT_ONE:
       stroke(#000000);
       fill(#ffffff);
-      rect(centerX, centerY, boxWidth, boxHeight);
+      rect(centerX, centerY, this.boxWidth, this.boxHeight);
       fill(#000000);
       textAlign(CENTER, CENTER);
       textSize(TEXT_SIZE_LABEL);
-      text(names[0], centerX, centerY);
+      text(this.names[0], centerX, centerY);
       break;
     case LABELED_RECT_PAIR:
       stroke(#000000);
       fill(#ffffff);
-      rect(centerX, centerY, boxWidth, boxHeight);
-      rect(centerX, -centerY, boxWidth, boxHeight);
+      rect(centerX, centerY, this.boxWidth, this.boxHeight);
+      rect(centerX, -centerY, this.boxWidth, this.boxHeight);
       fill(#000000);
       textAlign(CENTER, CENTER);
       textSize(TEXT_SIZE_LABEL);
@@ -119,73 +151,77 @@ class Box {
     case TRI_PAIR_CAP:
       stroke(#000000);
       fill(#ffffff);
-      triangle(centerX, bottomY,
-               leftX, bottomY - boxHeight,
-               leftX + boxWidth, bottomY - boxHeight);
+      triangle(centerX, this.bottomY,
+               this.leftX, this.bottomY - this.boxHeight,
+               this.leftX + this.boxWidth,
+               this.bottomY - this.boxHeight);
       triangle(centerX, -bottomY,
-               leftX, -bottomY + boxHeight,
-               leftX + boxWidth, -bottomY + boxHeight);
+               this.leftX, -this.bottomY + this.boxHeight,
+               this.leftX + this.boxWidth,
+               -this.bottomY + this.boxHeight);
       break;
     case TRI_PAIR_SANDGLASS:
       stroke(#000000);
       fill(#ffffff);
-      triangle(centerX, bottomY - boxHeight,
-               leftX, bottomY, leftX + boxWidth, bottomY);
-      triangle(centerX, -bottomY + boxHeight,
-               leftX, -bottomY, leftX + boxWidth, -bottomY);
+      triangle(centerX, this.bottomY - this.boxHeight,
+               this.leftX, this.bottomY,
+               this.leftX + this.boxWidth, this.bottomY);
+      triangle(centerX, -this.bottomY + this.boxHeight,
+               this.leftX, -this.bottomY,
+               this.leftX + this.boxWidth, -this.bottomY);
       break;
     case TERM_RECT:
       stroke(#ffffff);
       noFill();
-      rect(centerX, centerY, boxWidth, boxHeight, 5);
+      rect(centerX, centerY, this.boxWidth, this.boxHeight, 5);
       fill(#ffffff);
       textAlign(CENTER, BOTTOM);
       textSize(TEXT_SIZE_TERM);
       pushMatrix();
-      translate(leftX, centerY);
+      translate(this.leftX, centerY);
       rotate(HALF_PI);
-      text(names[0], 0, 0);
+      text(this.names[0], 0, 0);
       popMatrix();
       break;
     case DASHED_RECT:
       float x, y;
       boolean on;
       // from bottom left to bottom right
-      x = leftX;
-      y = bottomY;
+      x = this.leftX;
+      y = this.bottomY;
       on = true;
       beginShape(LINES);
-      while (x <= leftX + boxWidth) {
+      while (x <= this.leftX + this.boxWidth) {
         vertex(x, y);
         x += on ? DASHED_LINE_ON_INERVAL : DASHED_LINE_OFF_INTERVAL;
         on = !on;
       }
       endShape();
       // from bottom right to top right
-      x = leftX + boxWidth;
+      x = this.leftX + this.boxWidth;
       on = true;
       beginShape(LINES);
-      while (y >= bottomY - boxHeight) {
+      while (y >= this.bottomY - this.boxHeight) {
         vertex(x, y);
         y -= on ? DASHED_LINE_ON_INERVAL : DASHED_LINE_OFF_INTERVAL;
         on = !on;
       }
       endShape();
       // from top right to top left
-      y = bottomY - boxHeight;
+      y = this.bottomY - this.boxHeight;
       on = true;
       beginShape(LINES);
-      while (x >= leftX) {
+      while (x >= this.leftX) {
         vertex(x, y);
         x -= on ? DASHED_LINE_ON_INERVAL : DASHED_LINE_OFF_INTERVAL;
         on = !on;
       }
       endShape();
       // from top left to bottom left
-      x = leftX;
+      x = this.leftX;
       on = true;
       beginShape(LINES);
-      while (y <= bottomY) {
+      while (y <= this.bottomY) {
         vertex(x, y);
         y += on ? DASHED_LINE_ON_INERVAL : DASHED_LINE_OFF_INTERVAL;
         on = !on;
