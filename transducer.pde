@@ -90,7 +90,7 @@ Transducer _putPrimSwap (Graph graph, float[] portXs) {
                         {inRight, inLeft}, {outRight, outLeft});
 }
 
-// compose the pair (e,e') to the 'portIndex-th ports
+// sequentially compose the pair (e,e') at the `portIndex-th ports
 // e' is lower
 Transducer _seqCompPrimPairE (Graph graph, Transducer td,
                               int portIndex) {
@@ -99,6 +99,16 @@ Transducer _seqCompPrimPairE (Graph graph, Transducer td,
   float boxCenterX = graph.getPort(inTd).x; // must be equal to
                                             // graph.getPort(outTd).x
   float boxHalfWidth = MARGIN_UNIT;
+  if (portIndex > 0) {
+    float rightPortX = graph.getPort(td.inPortIds[portIndex - 1]).x;
+    boxHalfWidth = min(boxHalfWidth, (rightPortX - boxCenterX) / 2);
+    // avoid overlapping with the right ports
+  }
+  if (portIndex < td.inPortIds.length - 1) {
+    float leftPortX = graph.getPort(td.inPortIds[portIndex + 1]).x;
+    boxHalfWidth = min(boxHalfWidth, (boxCenterX - leftPortX) / 2);
+    // avoid overlapping with the left ports
+  }
   float boxHeight = MARGIN_UNIT * 2;
   float boxBottomY = td.bottomY + MARGIN_UNIT + boxHeight;
   graph.addBox(new Box(LABELED_RECT_PAIR, {"e'", "e"},
@@ -118,28 +128,282 @@ Transducer _seqCompPrimPairE (Graph graph, Transducer td,
   graph.connectPorts(inUpper, {outUpper});
   td.inPortIds[portIndex] = inLower;
   td.outPortIds[portIndex] = outUpper;
-  return new Transducer(td.leftX, td.rightX, boxBottomY,
-                        td.inPortIds, td.outPortIds);
+  return new Transducer(min(td.leftX, boxCenterX - boxHalfWidth),
+                        max(td.rightX, boxCenterX + boxHalfWidth),
+                        boxBottomY, td.inPortIds, td.outPortIds);
 }
 
-// compose the pair (phi,psi) to the 'portIndex-th ports
-// phi is lower: the ports are split
-Transducer _seqCompPrimPairPhiPsi (Graph graph, Transducer td,
-                                   int portIndex) {
+// boolean constants to specify primitive pairs that *change*
+// the number of ports
+boolean PAIR_P = true;      // (phi,psi)
+boolean PAIR_C = false;     // (c,c')
+
+// boolean constants to specify whether to compose swappings with the
+// pair (c,c')
+boolean SWAP = true;
+boolean UNSWAP = false;
+
+// sequentially compose the pair (phi,psi) or (c,c') at the
+// `portIndexLeft ports and 'portIndexRight ports
+// psi or c' is lower: the ports are joined
+Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
+                                 int portIndexRight,
+                                 int portIndexLeft,
+                                 boolean pair) {
+  return
+    this(graph, td, portIndexRight, portIndexLeft, pair, UNSWAP);
+}
+Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
+                                 int portIndexRight,
+                                 int portIndexLeft,
+                                 boolean pair, boolean swap) {
+  if (!(portIndexLeft > portIndexRight)) {
+    console.log("error _seqCompPrimPairJoin: portIndexLeft "
+                + portIndexLeft + " exceeds portIndexRight "
+                + portIndexRight);
+    return null;
+  }
+  int inTdRight = td.inPortIds[portIndexRight];
+  int outTdRight = td.outPortIds[portIndexRight];
+  int inTdLeft = td.inPortIds[portIndexLeft];
+  int outTdLeft = td.outPortIds[portIndexLeft];
+  float inTdRightX = graph.getPort(inTdRight).x;
+  float inTdLeftX = graph.getPort(inTdLeft).x;
+  // these must be equal to those of outTdRight/outTdLeft
+  float boxCenterX, boxHalfWidth;
+  switch (pair) {
+  case PAIR_P:
+    // put each of the pair in the center of given two ports; they are
+    // next to each other
+    ////////////////////////
+    // inTdLeft inTdRight //
+    //       _|_|_        //
+    //       \   /        //
+    //        \_/         //
+    //         |          //
+    //    (boxCenterX)    //
+    ////////////////////////
+    boxCenterX = (inTdRightX + inTdLeftX) / 2;
+    boxHalfWidth = (inTdRightX - inTdLeftX) / 2 + MARGIN_UNIT;
+    if (portIndexRight > 0) {
+      float rightPortX =
+        graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+      boxHalfWidth = min(boxHalfWidth,
+                         (rightPortX - inTdLeftX) / 2);
+      // avoid overlapping with the right ports
+    }
+    if (portIndexLeft < td.inPortIds.length - 1) {
+      float leftPortX =
+        graph.getPort(td.inPortIds[portIndexLeft + 1]).x;
+      boxHalfWidth = min(boxHalfWidth,
+                         (inTdRightX - leftPortX) / 2);
+      // avoid overlapping with the left ports
+    }
+    break;
+  case PAIR_C:
+    // put each of the pair near the given right port; given two ports
+    // are (assumed) not next to each other
+    if (swap) {
+      /////////////////////////////
+      // inTdLeft  inTdRight     //
+      //     |_________|_____    //
+      //              _|_____|_  //
+      //             |    c'   | //
+      //             |_________| //
+      //                  |      //
+      //            (boxCenterX) //
+      /////////////////////////////
+      boxCenterX = inTdRightX + MARGIN_UNIT;
+      boxHalfWidth = MARGIN_UNIT * 2;
+      if (portIndexRight > 0) {
+        float rightPortX =
+          graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+        boxCenterX = min(boxCenterX,
+                         inTdRightX + (rightPortX - inTdRightX) / 4);
+        boxHalfWidth = min(boxHalfWidth,
+                           (rightPortX - inTdRightX) / 2);
+        // avoid overlapping with the right ports
+      }
+      if (portIndexRight < td.inPortIds.length - 1) {
+        float leftPortX =
+          graph.getPort(td.inPortIds[portIndexRight + 1]).x;
+        boxHalfWidth = min(boxHalfWidth,
+                           MARGIN_UNIT
+                           + (inTdRightX - leftPortX) / 2);
+        // avoid overlapping with the left ports
+      }
+    } else {
+      /////////////////////////
+      // inTdLeft  inTdRight //
+      //     |___      |     //
+      //        _|_____|_    //
+      //       |    c'   |   //
+      //       |_________|   //
+      //            |        //
+      //       (boxCenterX)  //
+      /////////////////////////
+      boxCenterX = inTdRightX - MARGIN_UNIT;
+      boxHalfWidth = MARGIN_UNIT * 2;
+      if (portIndexRight > 0) {
+        float rightPortX =
+          graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+        boxHalfWidth = min(boxHalfWidth,
+                           MARGIN_UNIT
+                           + (rightPortX - inTdRightX) / 2);
+        // avoid overlapping with the right ports
+      }
+      if (portIndexRight < td.inPortIds.length - 1) {
+        float leftPortX =
+          graph.getPort(td.inPortIds[portIndexRight + 1]).x;
+        boxCenterX = max(boxCenterX,
+                         inTdRightX - (inTdRightX - leftPortX) / 4);
+        boxHalfWidth = min(boxHalfWidth,
+                           (inTdRightX - leftPortX) / 2);
+        // avoid overlapping with the left ports
+      }
+    }
+    break;
+  }
+  float boxHeight = MARGIN_UNIT * 2;
+  float boxBottomY;
+  switch (pair) {
+  case PAIR_P:
+    boxBottomY = td.bottomY + MARGIN_UNIT + boxHeight;
+    graph.addBox(new Box(TRI_PAIR_JOIN, null,
+                         boxCenterX - boxHalfWidth, boxBottomY,
+                         boxHalfWidth * 2, boxHeight));
+    break;
+  case PAIR_C:
+    boxBottomY = td.bottomY + MARGIN_UNIT * 2 + boxHeight;
+    graph.addBox(new Box(LABELED_RECT_PAIR, {"c'", "c"},
+                         boxCenterX - boxHalfWidth, boxBottomY,
+                         boxHalfWidth * 2, boxHeight));
+    break;
+  }
+  int inLower = graph.addPort(new Port(boxCenterX, boxBottomY,
+                                       HIDDEN));
+  int outLowerRight, outLowerLeft, inUpperRight, inUpperLeft;
+  switch (pair) {
+  case PAIR_P:
+    outLowerRight = graph.addPort(new Port(inTdRightX,
+                                           boxBottomY - boxHeight));
+    outLowerLeft = graph.addPort(new Port(inTdLeftX,
+                                          boxBottomY - boxHeight));
+    inUpperRight = graph.addPort(new Port(inTdRightX,
+                                          -boxBottomY + boxHeight,
+                                          HIDDEN));
+    inUpperLeft = graph.addPort(new Port(inTdLeftX,
+                                         -boxBottomY + boxHeight,
+                                         HIDDEN));
+    break;
+  case PAIR_C:
+    outLowerRight = graph.addPort(new Port(boxCenterX
+                                           + boxHalfWidth / 2,
+                                           boxBottomY - boxHeight));
+    outLowerLeft = graph.addPort(new Port(boxCenterX
+                                          - boxHalfWidth / 2,
+                                          boxBottomY - boxHeight));
+    inUpperRight = graph.addPort(new Port(boxCenterX
+                                          + boxHalfWidth / 2,
+                                          -boxBottomY + boxHeight,
+                                          HIDDEN));
+    inUpperLeft = graph.addPort(new Port(boxCenterX
+                                         - boxHalfWidth / 2,
+                                         -boxBottomY + boxHeight,
+                                         HIDDEN));
+    break;
+  }
+  int outUpper = graph.addPort(new Port(boxCenterX, -boxBottomY));
+  graph.connectPorts(inLower, {outLowerRight, outLowerLeft});
+  switch (pair) {
+  case PAIR_P:
+    graph.connectPorts(outLowerRight, {inTdRight});
+    graph.connectPorts(outLowerLeft, {inTdLeft});
+    graph.connectPorts(outTdRight, {inUpperRight});
+    graph.connectPorts(outTdLeft, {inUpperLeft});
+    break;
+  case PAIR_C:
+    if (swap) {
+      graph.connectPorts(outLowerRight, {inTdLeft},
+                         {{boxCenterX + boxHalfWidth / 2,
+                               boxBottomY - boxHeight - MARGIN_UNIT,
+                               inTdLeftX, td.bottomY + MARGIN_UNIT}});
+      graph.connectPorts(outLowerLeft, {inTdRight});
+      graph.connectPorts(outTdRight, {inUpperLeft});
+      graph.connectPorts(outTdLeft, {inUpperRight},
+                         {{inTdLeftX, -td.bottomY - MARGIN_UNIT,
+                               boxCenterX + boxHalfWidth / 2,
+                               -boxBottomY + boxHeight
+                               + MARGIN_UNIT}});
+    } else {
+      graph.connectPorts(outLowerRight, {inTdRight});
+      graph.connectPorts(outLowerLeft, {inTdLeft},
+                         {{boxCenterX - boxHalfWidth / 2,
+                               boxBottomY - boxHeight - MARGIN_UNIT,
+                               inTdLeftX, td.bottomY + MARGIN_UNIT}});
+      graph.connectPorts(outTdRight, {inUpperRight});
+      graph.connectPorts(outTdLeft, {inUpperLeft},
+                         {{inTdLeftX, -td.bottomY - MARGIN_UNIT,
+                               boxCenterX - boxHalfWidth / 2,
+                               -boxBottomY + boxHeight
+                               + MARGIN_UNIT}});
+    }
+    break;
+  }
+  graph.connectPorts(inUpperRight, {outUpper});
+  graph.connectPorts(inUpperLeft, {outUpper});
+
+  td.inPortIds[portIndexRight] = inLower;
+  td.inPortIds = concat(subset(td.inPortIds, 0, portIndexLeft),
+                        subset(td.inPortIds, portIndexLeft + 1));
+  td.outPortIds[portIndexRight] = outUpper;
+  td.outPortIds = concat(subset(td.outPortIds, 0, portIndexLeft),
+                        subset(td.outPortIds, portIndexLeft + 1));
+  return new Transducer(min(td.leftX, boxCenterX - boxHalfWidth),
+                        max(td.rightX, boxCenterX + boxHalfWidth),
+                        boxBottomY, td.inPortIds, td.outPortIds);
+}
+
+// compose the pair (phi,psi) or (c,c') at the
+// `portIndex-th ports
+// phi or c is lower: the ports are split
+Transducer _seqCompPrimPairSplit (Graph graph, Transducer td,
+                                  int portIndex, boolean pair) {
   int inTd = td.inPortIds[portIndex];
   int outTd = td.outPortIds[portIndex];
   float boxCenterX = graph.getPort(inTd).x; // must be equal to
                                             // graph.getPort(outTd).x
   float boxHalfWidth = MARGIN_UNIT * 2;
+  if (portIndex > 0) {
+    float rightPortX = graph.getPort(td.inPortIds[portIndex - 1]).x;
+    boxHalfWidth = min(boxHalfWidth, (rightPortX - boxCenterX) / 2);
+    // avoid overlapping with the right ports
+  }
+  if (portIndex < td.inPortIds.length - 1) {
+    float leftPortX = graph.getPort(td.inPortIds[portIndex + 1]).x;
+    boxHalfWidth = min(boxHalfWidth, (boxCenterX - leftPortX) / 2);
+    // avoid overlapping with the left ports
+  }
   float boxHeight = MARGIN_UNIT * 2;
   float boxBottomY = td.bottomY + MARGIN_UNIT + boxHeight;
-  graph.addBox(new Box(TRI_PAIR_SPLIT, null,
-                       boxCenterX - boxHalfWidth, boxBottomY,
-                       boxHalfWidth * 2, boxHeight));
-  int inLowerRight = graph.addPort(new Port(boxCenterX + MARGIN_UNIT,
+  switch (pair) {
+  case PAIR_P:
+    graph.addBox(new Box(TRI_PAIR_SPLIT, null,
+                         boxCenterX - boxHalfWidth, boxBottomY,
+                         boxHalfWidth * 2, boxHeight));
+    break;
+  case PAIR_C:
+    graph.addBox(new Box(LABELED_RECT_PAIR, {"c", "c'"},
+                         boxCenterX - boxHalfWidth, boxBottomY,
+                         boxHalfWidth * 2, boxHeight));
+    break;
+  }
+  int inLowerRight = graph.addPort(new Port(boxCenterX
+                                            + boxHalfWidth / 2,
                                             boxBottomY,
                                             HIDDEN));
-  int inLowerLeft = graph.addPort(new Port(boxCenterX - MARGIN_UNIT,
+  int inLowerLeft = graph.addPort(new Port(boxCenterX
+                                           - boxHalfWidth / 2,
                                             boxBottomY,
                                             HIDDEN));
   int outLower = graph.addPort(new Port(boxCenterX,
@@ -147,9 +411,11 @@ Transducer _seqCompPrimPairPhiPsi (Graph graph, Transducer td,
   int inUpper = graph.addPort(new Port(boxCenterX,
                                        -boxBottomY + boxHeight,
                                        HIDDEN));
-  int outUpperRight = graph.addPort(new Port(boxCenterX + MARGIN_UNIT,
+  int outUpperRight = graph.addPort(new Port(boxCenterX
+                                             + boxHalfWidth / 2,
                                              -boxBottomY));
-  int outUpperLeft = graph.addPort(new Port(boxCenterX - MARGIN_UNIT,
+  int outUpperLeft = graph.addPort(new Port(boxCenterX
+                                            - boxHalfWidth / 2,
                                             -boxBottomY));
   graph.connectPorts(inLowerRight, {outLower});
   graph.connectPorts(inLowerLeft, {outLower});
@@ -166,7 +432,43 @@ Transducer _seqCompPrimPairPhiPsi (Graph graph, Transducer td,
                         boxBottomY, td.inPortIds, td.outPortIds);
 }
 
-// boolean constants to specify connection wrt. the pair (c,c')
-byte C_SWAP = true;
-byte C_UNSWAP = false;
+// compose the pair (w,w') in parallel at the right of the
+// `portIndex-th ports
+// w' is lower: new ports are added
+Transducer _parCompPrimPairW (Graph graph, Transducer td,
+                              int portIndex) {
+  float boxCenterX, boxHalfWidth;
+  if (portIndex > 0) {
+    float leftPortX = graph.getPort(td.inPortIds[portIndex]).x;
+    float rightPortX = graph.getPort(td.inPortIds[portIndex - 1]).x;
+    boxCenterX = (rightPortX + leftPortX) / 2;
+    boxHalfWidth = min(MARGIN_UNIT, (rightPortX - leftPortX) / 4);
+    // avoid overlapping with the left ports
+  } else {
+    boxCenterX = td.rightX + MARGIN_UNIT * 2;
+    boxHalfWidth = MARGIN_UNIT;
+  }
+  float boxHeight = MARGIN_UNIT * 2;
+  float boxBottomY = MARGIN_UNIT + boxHeight;
+  if (portIndex > 0) boxBottomY += td.bottomY;
+  graph.addBox(new Box(LABELED_RECT_PAIR, {"w'", "w"},
+                       boxCenterX - boxHalfWidth, boxBottomY,
+                       boxHalfWidth * 2, boxHeight));
+  int inLower = graph.addPort(new Port(boxCenterX, boxBottomY,
+                                       HIDDEN));
+  int outLower = graph.addPort(new Port(boxCenterX,
+                                        boxBottomY - boxHeight));
+  int inUpper = graph.addPort(new Port(boxCenterX,
+                                       -boxBottomY + boxHeight,
+                                       HIDDEN));
+  int outUpper = graph.addPort (new Port(boxCenterX, -boxBottomY));
+  graph.connectPorts(inLower, {outLower});
+  graph.connectPorts(inUpper, {outUpper});
+  td.inPortIds = splice(td.inPortIds, inLower, portIndex);
+  td.outPortIds = splice(td.outPortIds, outUpper, portIndex);
+  return new Transducer(min(td.leftX, boxCenterX - boxHalfWidth),
+                        max(td.rightX, boxCenterX + boxHalfWidth),
+                        boxBottomY, td.inPortIds, td.outPortIds);
+}
+
 

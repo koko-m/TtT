@@ -19,6 +19,11 @@ class Graph {
     return this.boxed.length - 1; // box id
   }
 
+  void connectPorts (int sourcePortId,
+                     int[] targetPortIds, float[][] paths) {
+    this.ports[sourcePortId].addNextPortIds(targetPortIds, paths);
+  }
+
   void connectPorts (int sourcePortId, int[] targetPortIds) {
     this.ports[sourcePortId].addNextPortIds(targetPortIds);
   }
@@ -36,18 +41,49 @@ class Graph {
     for (int i = 0; i < ports.length; i++) {
       Port p = this.ports[i];
       if (p.visible) {
+        if (p.nextPortIds.length != p.paths.length) {
+          console.log("error draw (port id: " + i
+                      + "): nextPortIds.length "
+                      + nextPortIds.length
+                      + " is not equal to paths.length "
+                      + paths.length);
+          break;
+        }
         for (int j = 0; j < p.nextPortIds.length; j++) {
-          stroke(#000000);
-          line(p.x, p.y,
-               this.ports[p.nextPortIds[j]].x,
-               this.ports[p.nextPortIds[j]].y);
+          float[] path = p.paths[j];
+          if (path.length % 2 != 0) {
+            console.log("error draw (port id: " + i
+                        + " , next port id: " + j
+                        + "): path.length " + path.length
+                        + " is not even");
+            break;
+          }
+          if (path.length > 0) {
+            float x = p.x;
+            float y = p.y;
+            for (int k = 0; k < path.length / 2; k++) {
+              stroke(#000000);
+              line(x, y, path[k * 2], path[k * 2 + 1]);
+              x = path[k * 2];
+              y = path[k * 2 + 1];
+            }
+            stroke(#000000);
+            line(x, y,
+                 this.ports[p.nextPortIds[j]].x,
+                 this.ports[p.nextPortIds[j]].y);
+          } else {
+            stroke(#000000);
+            line(p.x, p.y,
+                 this.ports[p.nextPortIds[j]].x,
+                 this.ports[p.nextPortIds[j]].y);
+          }
         }
       }
       this.ports[i].drawName();
     }
     for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
   }
-
+  
   void drawPorts () {
     for (int i = 0; i < ports.length; i++) {
       Port p = this.ports[i];
@@ -76,6 +112,7 @@ class Port {
   float x;
   float y;
   int[] nextPortIds;
+  float[][] paths;
   boolean visible;
   String name;
 
@@ -83,6 +120,7 @@ class Port {
     this.x = x;
     this.y = y;
     this.nextPortIds = new int[0];
+    this.paths = new float[0];
     this.visible = visible;
     this.name = name;
   }
@@ -99,10 +137,22 @@ class Port {
     this(x, y, VISIBLE, null);
   }
 
-  void addNextPortIds (int[] portIds) {
+  void addNextPortIds (int[] portIds, float[][] paths) {
+    if (portIds.length != paths.length) {
+      console.log("error addNextPortIds: portIds.length "
+                  + portIds.length + " is not equal to paths.length "
+                  + paths.length);
+      return;
+    }
     this.nextPortIds = concat(this.nextPortIds, portIds);
+    this.paths = concat(this.paths, paths);
   }
-
+  
+  void addNextPortIds (int[] portIds) {
+    float[][] paths = new float[portIds.length][0];
+    this.addNextPortIds(portIds, paths);
+  }
+  
   void drawName () {
     if (this.name != null) {
       fill(#ffffff);

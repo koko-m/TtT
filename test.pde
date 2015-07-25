@@ -28,9 +28,9 @@ void testGraph () {
   graph.drawAll();
 }
 
-void testTdConstructors (first) {
+void testTdConstructorsPrim (first) {
   Graph graph = new Graph();
-  Transducer td = _putPrimH(graph, {15, 5});
+  Transducer td = _putPrimH(graph, {MARGIN_UNIT * 3, MARGIN_UNIT});
   td.debug(first);
   td = _putPrimK(graph, td.rightX + MARGIN_UNIT, 3029486);
   td.debug(first);
@@ -38,18 +38,112 @@ void testTdConstructors (first) {
   td.debug(first);
   td = _putPrimSum(graph, td.rightX + MARGIN_UNIT);
   td.debug(first);
-  td = _putPrimSwap(graph, {td.rightX + MARGIN_UNIT + 20,
+  td = _putPrimSwap(graph, {td.rightX + MARGIN_UNIT + MARGIN_UNIT * 2,
                             td.rightX + MARGIN_UNIT});
+  td.debug(first);
+  graph.drawAll();
+}
+
+void testTdConstructorsSeqComp (first) {
+  Graph graph = new Graph();
+  Transducer td = _seqCompPrimPairE(graph,
+                                    _putPrimK(graph, 0, 3029486),
+                                    0);
   td.debug(first);
   td = _seqCompPrimPairE(graph,
                          _putPrimK(graph, td.rightX + MARGIN_UNIT,
-                                   3029486),
+                                   1),
                          0);
   td.debug(first);
-  td = _seqCompPrimPairPhiPsi(graph,
-                              _putPrimSum(graph,
-                                          td.rightX + MARGIN_UNIT),
-                              1);
+  td = _seqCompPrimPairE(graph,
+                         _putPrimSwap(graph, {
+                             td.rightX + MARGIN_UNIT + MARGIN_UNIT,
+                             td.rightX + MARGIN_UNIT}),
+                         1);
+  td.debug(first);
+  td = _seqCompPrimPairE(graph,
+                         _putPrimSwap(graph, {
+                             td.rightX + MARGIN_UNIT + MARGIN_UNIT,
+                             td.rightX + MARGIN_UNIT}),
+                         0);
+  td.debug(first);
+  td = _seqCompPrimPairJoin(graph,
+                            _putPrimH(graph, {
+                                td.rightX + MARGIN_UNIT * 2
+                                + MARGIN_UNIT * 6,
+                                td.rightX + MARGIN_UNIT * 2}),
+                            0, 1, PAIR_P);
+  td.debug(first);
+  td = _seqCompPrimPairJoin(graph,
+                            _putPrimSum(graph,
+                                        td.rightX + MARGIN_UNIT),
+                            0, 1, PAIR_P);
+  td.debug(first);
+  td = _seqCompPrimPairJoin(graph,
+                            _putPrimSwap(graph, {
+                                td.rightX + MARGIN_UNIT * 2
+                                + MARGIN_UNIT,
+                                td.rightX + MARGIN_UNIT * 2}),
+                            0, 1, PAIR_P);
+  td.debug(first);
+  td = _seqCompPrimPairJoin(graph,
+                            _putPrimSum(graph,
+                                        td.rightX + MARGIN_UNIT),
+                            1, 2, PAIR_C, SWAP);
+  td.debug(first);
+  td = _seqCompPrimPairJoin(graph,
+                            _putPrimSum(graph,
+                                        td.rightX + MARGIN_UNIT),
+                            0, 2, PAIR_C, UNSWAP);
+  td.debug(first);
+  td = _seqCompPrimPairSplit(graph,
+                             _putPrimSum(graph,
+                                         td.rightX + MARGIN_UNIT),
+                             1, PAIR_P);
+  td.debug(first);
+  td = _seqCompPrimPairSplit(graph,
+                             _putPrimH(graph, {
+                                 td.rightX + MARGIN_UNIT * 2
+                                 + MARGIN_UNIT * 6,
+                                 td.rightX + MARGIN_UNIT * 2}),
+                             0, PAIR_C);
+  td.debug(first);
+  graph.drawAll();
+}
+
+void testTdConstructorsParComp (first) {
+  Graph graph = new Graph();
+  Transducer td = _parCompPrimPairW(graph,
+                                    _putPrimH(graph, {
+                                        MARGIN_UNIT
+                                        + MARGIN_UNIT * 2,
+                                        MARGIN_UNIT}),
+                                    0);
+  td.debug(first);
+  Transducer td = _parCompPrimPairW(graph,
+                                    _putPrimH(graph, {
+                                        td.rightX + MARGIN_UNIT * 2
+                                        + MARGIN_UNIT * 2,
+                                        td.rightX + MARGIN_UNIT * 2}),
+                                    1);
+  td.debug(first);
+  td = _parCompPrimPairW(graph,
+                         _putPrimH(graph, {
+                             td.rightX + MARGIN_UNIT * 2
+                             + MARGIN_UNIT * 3,
+                             td.rightX + MARGIN_UNIT * 2}),
+                         1);
+  td.debug(first);
+  td = _parCompPrimPairW(graph,
+                         _parCompPrimPairW(graph,
+                                           _putPrimH(graph, {
+                                               td.rightX
+                                               + MARGIN_UNIT * 2
+                                               + MARGIN_UNIT * 2,
+                                               td.rightX
+                                               + MARGIN_UNIT * 2}),
+                                           0),
+                         0);
   td.debug(first);
   graph.drawAll();
 }
