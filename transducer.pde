@@ -144,29 +144,29 @@ boolean SWAP = true;
 boolean UNSWAP = false;
 
 // sequentially compose the pair (phi,psi) or (c,c') at the
-// `portIndexLeft ports and 'portIndexRight ports
+// `portLeftIndex ports and 'portRightIndex ports
 // psi or c' is lower: the ports are joined
 Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
-                                 int portIndexRight,
-                                 int portIndexLeft,
+                                 int portRightIndex,
+                                 int portLeftIndex,
                                  boolean pair) {
   return
-    this(graph, td, portIndexRight, portIndexLeft, pair, UNSWAP);
+    this(graph, td, portRightIndex, portLeftIndex, pair, UNSWAP);
 }
 Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
-                                 int portIndexRight,
-                                 int portIndexLeft,
+                                 int portRightIndex,
+                                 int portLeftIndex,
                                  boolean pair, boolean swap) {
-  if (!(portIndexLeft > portIndexRight)) {
-    console.log("error _seqCompPrimPairJoin: portIndexLeft "
-                + portIndexLeft + " exceeds portIndexRight "
-                + portIndexRight);
+  if (!(portLeftIndex > portRightIndex)) {
+    console.log("error _seqCompPrimPairJoin: portLeftIndex "
+                + portLeftIndex + " exceeds portRightIndex "
+                + portRightIndex);
     return null;
   }
-  int inTdRight = td.inPortIds[portIndexRight];
-  int outTdRight = td.outPortIds[portIndexRight];
-  int inTdLeft = td.inPortIds[portIndexLeft];
-  int outTdLeft = td.outPortIds[portIndexLeft];
+  int inTdRight = td.inPortIds[portRightIndex];
+  int outTdRight = td.outPortIds[portRightIndex];
+  int inTdLeft = td.inPortIds[portLeftIndex];
+  int outTdLeft = td.outPortIds[portLeftIndex];
   float inTdRightX = graph.getPort(inTdRight).x;
   float inTdLeftX = graph.getPort(inTdLeft).x;
   // these must be equal to those of outTdRight/outTdLeft
@@ -185,16 +185,16 @@ Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
     ////////////////////////
     boxCenterX = (inTdRightX + inTdLeftX) / 2;
     boxHalfWidth = (inTdRightX - inTdLeftX) / 2 + MARGIN_UNIT;
-    if (portIndexRight > 0) {
+    if (portRightIndex > 0) {
       float rightPortX =
-        graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+        graph.getPort(td.inPortIds[portRightIndex - 1]).x;
       boxHalfWidth = min(boxHalfWidth,
                          (rightPortX - inTdLeftX) / 2);
       // avoid overlapping with the right ports
     }
-    if (portIndexLeft < td.inPortIds.length - 1) {
+    if (portLeftIndex < td.inPortIds.length - 1) {
       float leftPortX =
-        graph.getPort(td.inPortIds[portIndexLeft + 1]).x;
+        graph.getPort(td.inPortIds[portLeftIndex + 1]).x;
       boxHalfWidth = min(boxHalfWidth,
                          (inTdRightX - leftPortX) / 2);
       // avoid overlapping with the left ports
@@ -215,18 +215,18 @@ Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
       /////////////////////////////
       boxCenterX = inTdRightX + MARGIN_UNIT;
       boxHalfWidth = MARGIN_UNIT * 2;
-      if (portIndexRight > 0) {
+      if (portRightIndex > 0) {
         float rightPortX =
-          graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+          graph.getPort(td.inPortIds[portRightIndex - 1]).x;
         boxCenterX = min(boxCenterX,
                          inTdRightX + (rightPortX - inTdRightX) / 4);
         boxHalfWidth = min(boxHalfWidth,
                            (rightPortX - inTdRightX) / 2);
         // avoid overlapping with the right ports
       }
-      if (portIndexRight < td.inPortIds.length - 1) {
+      if (portRightIndex < td.inPortIds.length - 1) {
         float leftPortX =
-          graph.getPort(td.inPortIds[portIndexRight + 1]).x;
+          graph.getPort(td.inPortIds[portRightIndex + 1]).x;
         boxHalfWidth = min(boxHalfWidth,
                            MARGIN_UNIT
                            + (inTdRightX - leftPortX) / 2);
@@ -244,17 +244,17 @@ Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
       /////////////////////////
       boxCenterX = inTdRightX - MARGIN_UNIT;
       boxHalfWidth = MARGIN_UNIT * 2;
-      if (portIndexRight > 0) {
+      if (portRightIndex > 0) {
         float rightPortX =
-          graph.getPort(td.inPortIds[portIndexRight - 1]).x;
+          graph.getPort(td.inPortIds[portRightIndex - 1]).x;
         boxHalfWidth = min(boxHalfWidth,
                            MARGIN_UNIT
                            + (rightPortX - inTdRightX) / 2);
         // avoid overlapping with the right ports
       }
-      if (portIndexRight < td.inPortIds.length - 1) {
+      if (portRightIndex < td.inPortIds.length - 1) {
         float leftPortX =
-          graph.getPort(td.inPortIds[portIndexRight + 1]).x;
+          graph.getPort(td.inPortIds[portRightIndex + 1]).x;
         boxCenterX = max(boxCenterX,
                          inTdRightX - (inTdRightX - leftPortX) / 4);
         boxHalfWidth = min(boxHalfWidth,
@@ -353,12 +353,12 @@ Transducer _seqCompPrimPairJoin (Graph graph, Transducer td,
   graph.connectPorts(inUpperRight, {outUpper});
   graph.connectPorts(inUpperLeft, {outUpper});
 
-  td.inPortIds[portIndexRight] = inLower;
-  td.inPortIds = concat(subset(td.inPortIds, 0, portIndexLeft),
-                        subset(td.inPortIds, portIndexLeft + 1));
-  td.outPortIds[portIndexRight] = outUpper;
-  td.outPortIds = concat(subset(td.outPortIds, 0, portIndexLeft),
-                        subset(td.outPortIds, portIndexLeft + 1));
+  td.inPortIds[portRightIndex] = inLower;
+  td.inPortIds = concat(subset(td.inPortIds, 0, portLeftIndex),
+                        subset(td.inPortIds, portLeftIndex + 1));
+  td.outPortIds[portRightIndex] = outUpper;
+  td.outPortIds = concat(subset(td.outPortIds, 0, portLeftIndex),
+                        subset(td.outPortIds, portLeftIndex + 1));
   return new Transducer(min(td.leftX, boxCenterX - boxHalfWidth),
                         max(td.rightX, boxCenterX + boxHalfWidth),
                         boxBottomY, td.inPortIds, td.outPortIds);
@@ -471,4 +471,128 @@ Transducer _parCompPrimPairW (Graph graph, Transducer td,
                         boxBottomY, td.inPortIds, td.outPortIds);
 }
 
+// compose given two transducers and make a cross connection
+Transducer _makeCross(Graph graph,
+                      Transducer leftTd, int portRightIndex,
+                      Transducer rightTd, int portLeftIndex) {
+  float interval = rightTd.leftX - leftTd.rightX;
+  if (interval <= 0) {
+    console.log("error _makeCross: leftTd.rightX "
+                + leftTd.rightX + " exceeds rightTd.leftX "
+                + rightTd.leftX);
+    return null;
+  }
+  int inRightTd = rightTd.inPortIds[portRightIndex];
+  int outRightTd = rightTd.outPortIds[portRightIndex];
+  int inLeftTd = leftTd.inPortIds[portLeftIndex];
+  int outLeftTd = leftTd.outPortIds[portLeftIndex];
+  graph.connectPorts(outLeftTd, {inRightTd},
+                     {{graph.getPort(outLeftTd).x,
+                           -leftTd.bottomY - MARGIN_UNIT,
+                           leftTd.rightX + interval / 6,
+                           -leftTd.bottomY - MARGIN_UNIT,
+                           rightTd.leftX - interval / 6,
+                           rightTd.bottomY + MARGIN_UNIT,
+                           graph.getPort(inRightTd).x,
+                           rightTd.bottomY + MARGIN_UNIT}});
+  graph.connectPorts(outRightTd, {inLeftTd},
+                     {{graph.getPort(outRightTd).x,
+                           -rightTd.bottomY - MARGIN_UNIT,
+                           rightTd.leftX - interval / 6,
+                           -rightTd.bottomY - MARGIN_UNIT,
+                           leftTd.rightX + interval / 6,
+                           leftTd.bottomY + MARGIN_UNIT,
+                           graph.getPort(inLeftTd).x,
+                           leftTd.bottomY + MARGIN_UNIT}});
+  int[] rightInPortIds
+    = concat(subset(rightTd.inPortIds, 0, portRightIndex),
+             subset(rightTd.inPortIds, portRightIndex + 1));
+  int[] rightOutPortIds
+    = concat(subset(rightTd.outPortIds, 0, portRightIndex),
+             subset(rightTd.outPortIds, portRightIndex + 1));
+  int[] leftInPortIds
+    = concat(subset(leftTd.inPortIds, 0, portLeftIndex),
+             subset(leftTd.inPortIds, portLeftIndex + 1));
+  int[] leftOutPortIds
+    = concat(subset(leftTd.outPortIds, 0, portLeftIndex),
+             subset(leftTd.outPortIds, portLeftIndex + 1));
+  return new Transducer(leftTd.leftX, rightTd.rightX,
+                        max(leftTd.bottomY, rightTd.bottomY) +
+                        MARGIN_UNIT,
+                        concat(rightInPortIds, leftInPortIds),
+                        concat(rightOutPortIds, leftOutPortIds));
+}
 
+// make self loops with swapping
+Transducer _makeSwapLoops (Graph graph, Transducer td,
+                           int portRightIndex, int portLeftIndex) {
+  if (!(portLeftIndex > portRightIndex)) {
+    console.log("error _makeSwapLoops: portLeftIndex "
+                + portLeftIndex + " exceeds portRightIndex "
+                + portRightIndex);
+    return null;
+  }
+  int inRight = td.inPortIds[portRightIndex];
+  int outRight = td.outPortIds[portRightIndex];
+  int inLeft = td.inPortIds[portLeftIndex];
+  int outLeft = td.outPortIds[portLeftIndex];
+  graph.connectPorts(outRight, {inLeft},
+                     {{graph.getPort(outRight).x,
+                           -td.bottomY - MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           -td.bottomY - MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           -MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT * 2,
+                           MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT * 2,
+                           td.bottomY + MARGIN_UNIT * 2,
+                           graph.getPort(inLeft).x,
+                           td.bottomY + MARGIN_UNIT * 2}});
+  graph.connectPorts(outLeft, {inRight},
+                     {{graph.getPort(outLeft).x,
+                           -td.bottomY - MARGIN_UNIT * 2,
+                           td.rightX + MARGIN_UNIT * 2,
+                           -td.bottomY - MARGIN_UNIT * 2,
+                           td.rightX + MARGIN_UNIT * 2,
+                           -MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           td.bottomY + MARGIN_UNIT,
+                           graph.getPort(inRight).x,
+                           td.bottomY + MARGIN_UNIT}});
+  td.inPortIds = concat(subset(td.inPortIds, 0, portLeftIndex),
+                        subset(td.inPortIds, portLeftIndex + 1));
+  td.inPortIds = concat(subset(td.inPortIds, 0, portRightIndex),
+                        subset(td.inPortIds, portRightIndex + 1));
+  td.outPortIds = concat(subset(td.outPortIds, 0, portLeftIndex),
+                        subset(td.outPortIds, portLeftIndex + 1));
+  td.outPortIds = concat(subset(td.outPortIds, 0, portRightIndex),
+                        subset(td.outPortIds, portRightIndex + 1));
+  return new Transducer(td.leftX, td.rightX + MARGIN_UNIT * 2,
+                        td.bottomY + MARGIN_UNIT * 2,
+                        td.inPortIds, td.outPortIds);
+}
+
+// make a self loop
+Transducer _makeLoop (Graph graph, Transducer td, int portIndex) {
+  int inn = td.inPortIds[portIndex];
+  int out = td.outPortIds[portIndex];
+  graph.connectPorts(out, {inn},
+                     {{graph.getPort(out).x,
+                           -td.bottomY - MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           -td.bottomY - MARGIN_UNIT,
+                           td.rightX + MARGIN_UNIT,
+                           td.bottomY + MARGIN_UNIT,
+                           graph.getPort(inn).x,
+                           td.bottomY + MARGIN_UNIT}});
+  td.inPortIds = concat(subset(td.inPortIds, 0, portIndex),
+                        subset(td.inPortIds, portIndex + 1));
+  td.outPortIds = concat(subset(td.outPortIds, 0, portIndex),
+                        subset(td.outPortIds, portIndex + 1));
+  return new Transducer(td.leftX, td.rightX + MARGIN_UNIT,
+                        td.bottomY + MARGIN_UNIT,
+                        td.inPortIds, td.outPortIds);
+}

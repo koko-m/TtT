@@ -22,6 +22,8 @@ void draw () {
   testTdConstructorsSeqComp(first);
   translate(0, 100);
   testTdConstructorsParComp(first);
+  translate(0, 120);
+  testTdConstructorsConnect(first);
   noLoop();
   // translate(x, 100);
   // testGraph();
@@ -48,6 +50,8 @@ float DASHED_LINE_ON_INERVAL = 4;
 float DASHED_LINE_OFF_INTERVAL = 3;
 
 float MARGIN_UNIT = 10;
+
+float CROSS_INTERVAL = MARGIN_UNIT * 6;
 
 float TERM_BOX_MARGIN_LEFT = 15;
 float TERM_BOX_MARGIN_RIGHT = 5;

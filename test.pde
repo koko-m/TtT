@@ -147,3 +147,57 @@ void testTdConstructorsParComp (first) {
   td.debug(first);
   graph.drawAll();
 }
+
+void testTdConstructorsConnect (first) {
+  Graph graph = new Graph();
+  Transducer leftTd = _putPrimH(graph, {MARGIN_UNIT + MARGIN_UNIT * 2,
+                                        MARGIN_UNIT});
+  Transducer rightTd =
+    _seqCompPrimPairSplit(graph,
+                          _putPrimH(graph, {
+                              leftTd.rightX + MARGIN_UNIT
+                              + CROSS_INTERVAL
+                              + MARGIN_UNIT * 6,
+                              leftTd.rightX + MARGIN_UNIT
+                              + CROSS_INTERVAL}),
+                          0, PAIR_C);
+  Transducer td = _makeCross(graph, leftTd, 1, rightTd, 1);
+  td.debug(first);
+  td =
+    _makeSwapLoops(graph,
+                   _seqCompPrimPairSplit(graph,
+                                         _putPrimH(graph, {
+                                             td.rightX
+                                             + MARGIN_UNIT * 2
+                                             + MARGIN_UNIT * 6,
+                                             td.rightX
+                                             + MARGIN_UNIT * 2}),
+                                         0, PAIR_C),
+                   1,2);
+  td.debug(first);
+  td =
+    _makeSwapLoops(graph,
+                   _seqCompPrimPairSplit(graph,
+                                         _putPrimH(graph, {
+                                             td.rightX
+                                             + MARGIN_UNIT * 2
+                                             + MARGIN_UNIT * 6,
+                                             td.rightX
+                                             + MARGIN_UNIT * 2}),
+                                         0, PAIR_C),
+                   0,2);
+  td.debug(first);
+  td =
+    _makeLoop(graph,
+              _seqCompPrimPairSplit(graph,
+                                    _putPrimH(graph, {
+                                        td.rightX
+                                        + MARGIN_UNIT * 2
+                                        + MARGIN_UNIT * 6,
+                                        td.rightX
+                                        + MARGIN_UNIT * 2}),
+                                    0, PAIR_C),
+                   1);
+  td.debug(first);
+  graph.drawAll();
+}
