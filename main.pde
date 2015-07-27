@@ -24,11 +24,13 @@ void draw () {
   testTdConstructorsParComp(first);
   translate(0, 120);
   testTdConstructorsConnect(first);
-  noLoop();
+  translate(0, 120);
+  testTdConstructorsAddBox(first);
   // translate(x, 100);
-  // testGraph();
+  // testTransducer();
   // x -= 5;
   // if (x < -200) x = 1000;
+  noLoop();
   first = false;
 }
 
@@ -40,18 +42,15 @@ void mouseClicked() {
 
 // macros
 
+float UNIT_LENGTH = 10;
+
 int TEXT_SIZE_LABEL = 10;
 int TEXT_SIZE_PORT = 10;
 int TEXT_SIZE_TERM = 12;
 int TEXT_SIZE_DEBUG = 10;
-int TEXT_MARGIN = 2.5;
+int TEXT_MARGIN = UNIT_LENGTH / 2;
 
 float DASHED_LINE_ON_INERVAL = 4;
 float DASHED_LINE_OFF_INTERVAL = 3;
 
-float MARGIN_UNIT = 10;
-
-float CROSS_INTERVAL = MARGIN_UNIT * 6;
-
-float TERM_BOX_MARGIN_LEFT = 15;
-float TERM_BOX_MARGIN_RIGHT = 5;
+float CROSS_INTERVAL = UNIT_LENGTH * 6;

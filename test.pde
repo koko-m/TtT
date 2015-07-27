@@ -5,199 +5,249 @@ void testParse () {
   }
 }
 
-void testGraph () {
-  Graph graph = new Graph();
-  int p0 = graph.addPort(new Port(0, 15));
-  int p1 = graph.addPort(new Port(0, 5, HIDDEN, "in"));
-  int p2 = graph.addPort(new Port(0, -5, VISIBLE, "out"));
-  int p3 = graph.addPort(new Port(0, -15, HIDDEN));
-  graph.connectPorts(p0, {p1});
-  graph.connectPorts(p1, {p2});
-  graph.connectPorts(p2, {p3});
-  graph.addBox(new Box(LABELED_RECT_ONE, {"f"}, -10, 5, 20, 10));
-  graph.addBox(new Box(LABELED_RECT_PAIR, {"c", "c'"},
-                       20, 15, 20, 10));
-  graph.addBox(new Box(TRI_PAIR_JOIN, {}, 50, 15, 20, 10));
-  graph.addBox(new Box(TRI_PAIR_SPLIT, {}, 80, 15, 30, 10));
+void testTransducer () {
+  Transducer td = new Transducer(1000, 50);
+  int p0 = td.addPort(new Port(10, 15));
+  int p1 = td.addPort(new Port(10, 5, HIDDEN, "in"));
+  int p2 = td.addPort(new Port(10, -5, VISIBLE, "out"));
+  int p3 = td.addPort(new Port(10, -15, HIDDEN));
+  td.connectPorts(p0, {p1});
+  td.connectPorts(p1, {p2});
+  td.connectPorts(p2, {p3});
+  td.addBox(new Box(LABELED_RECT_ONE, {"f"}, 0, 5, 20, 10));
+  td.addBox(new Box(LABELED_RECT_PAIR, {"c", "c'"},
+                    30, 15, 20, 10));
+  td.addBox(new Box(TRI_PAIR_JOIN, {}, 60, 15, 20, 10));
+  td.addBox(new Box(TRI_PAIR_SPLIT, {}, 90, 15, 30, 10));
   textSize(TEXT_SIZE_TERM);
-  graph.addBox(new Box(TERM_RECT, {"(lambda(x)(+x x))"},
-                       120, 20, 20,
-                       textWidth("(lambda(x)(+x x))")
-                       + TEXT_MARGIN * 2));
-  graph.addBox(new Box(DASHED_RECT, {}, 150, 20, 50, 40));
-  graph.drawAll();
+  td.addBox(new Box(TERM_RECT, {"(lambda(x)(+x x))"},
+                    130, 20, 20,
+                    textWidth("(lambda(x)(+x x))")
+                    + TEXT_MARGIN * 2));
+  td.addBox(new Box(DASHED_RECT, {}, 160, 20, 50, 40));
+  td.drawAll();
 }
 
-void testTdConstructorsPrim (first) {
-  Graph graph = new Graph();
-  Transducer td = _putPrimH(graph, {MARGIN_UNIT * 3, MARGIN_UNIT});
+void testTdConstructorsPrim (boolean first) {
+  console.log("******** test: primitives ********");
+  pushMatrix();
+  Transducer td = primH(UNIT_LENGTH * 2);
+  td.drawAll();
   td.debug(first);
-  td = _putPrimK(graph, td.rightX + MARGIN_UNIT, 3029486);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = primK(3029486);
+  td.drawAll();
   td.debug(first);
-  td = _putPrimK(graph, td.rightX + MARGIN_UNIT, 0);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = primK(0);
+  td.drawAll();
   td.debug(first);
-  td = _putPrimSum(graph, td.rightX + MARGIN_UNIT);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = primSum(UNIT_LENGTH);
+  td.drawAll();
   td.debug(first);
-  td = _putPrimSwap(graph, {td.rightX + MARGIN_UNIT + MARGIN_UNIT * 2,
-                            td.rightX + MARGIN_UNIT});
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = primSwap(UNIT_LENGTH);
+  td.drawAll();
   td.debug(first);
-  graph.drawAll();
+  popMatrix();
 }
 
-void testTdConstructorsSeqComp (first) {
-  Graph graph = new Graph();
-  Transducer td = _seqCompPrimPairE(graph,
-                                    _putPrimK(graph, 0, 3029486),
-                                    0);
+void testTdConstructorsSeqComp (boolean first) {
+  console.log("******** test: sequential composition ********");
+  pushMatrix();
+  Transducer td = seqCompPrimPairE(0, primK(3029486));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairE(graph,
-                         _putPrimK(graph, td.rightX + MARGIN_UNIT,
-                                   1),
-                         0);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairE(0, primK(0));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairE(graph,
-                         _putPrimSwap(graph, {
-                             td.rightX + MARGIN_UNIT + MARGIN_UNIT,
-                             td.rightX + MARGIN_UNIT}),
-                         1);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairE(1, primSwap(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairE(graph,
-                         _putPrimSwap(graph, {
-                             td.rightX + MARGIN_UNIT + MARGIN_UNIT,
-                             td.rightX + MARGIN_UNIT}),
-                         0);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairE(0, primSwap(UNIT_LENGTH * 2));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairJoin(graph,
-                            _putPrimH(graph, {
-                                td.rightX + MARGIN_UNIT * 2
-                                + MARGIN_UNIT * 6,
-                                td.rightX + MARGIN_UNIT * 2}),
-                            0, 1, PAIR_P);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 1, PAIR_P, SWAP,
+                           primH(UNIT_LENGTH * 6));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairJoin(graph,
-                            _putPrimSum(graph,
-                                        td.rightX + MARGIN_UNIT),
-                            0, 1, PAIR_P);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(1, 2, PAIR_P, UNSWAP,
+                           primSum(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairJoin(graph,
-                            _putPrimSwap(graph, {
-                                td.rightX + MARGIN_UNIT * 2
-                                + MARGIN_UNIT,
-                                td.rightX + MARGIN_UNIT * 2}),
-                            0, 1, PAIR_P);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 1, PAIR_P, UNSWAP,
+                           primSwap(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairJoin(graph,
-                            _putPrimSum(graph,
-                                        td.rightX + MARGIN_UNIT),
-                            1, 2, PAIR_C, SWAP);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 1, PAIR_C, SWAP,
+                           primSum(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairJoin(graph,
-                            _putPrimSum(graph,
-                                        td.rightX + MARGIN_UNIT),
-                            0, 2, PAIR_C, UNSWAP);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 1, PAIR_C, UNSWAP,
+                           primSwap(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairSplit(graph,
-                             _putPrimSum(graph,
-                                         td.rightX + MARGIN_UNIT),
-                             1, PAIR_P);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 2, PAIR_P, SWAP,
+                           primSum(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  td = _seqCompPrimPairSplit(graph,
-                             _putPrimH(graph, {
-                                 td.rightX + MARGIN_UNIT * 2
-                                 + MARGIN_UNIT * 6,
-                                 td.rightX + MARGIN_UNIT * 2}),
-                             0, PAIR_C);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 2, PAIR_C, SWAP,
+                           primSum(UNIT_LENGTH * 2));
+  td.drawAll();
   td.debug(first);
-  graph.drawAll();
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 2, PAIR_P, UNSWAP,
+                           primSum(UNIT_LENGTH * 2));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoin(0, 2, PAIR_C, UNSWAP,
+                           primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairSplit(1, PAIR_P,
+                            primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairSplit(1, PAIR_P,
+                            primSum(UNIT_LENGTH * 3));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairSplit(0, PAIR_C,
+                            primH(UNIT_LENGTH * 5));
+  td.drawAll();
+  td.debug(first);
+  popMatrix();
 }
 
-void testTdConstructorsParComp (first) {
-  Graph graph = new Graph();
-  Transducer td = _parCompPrimPairW(graph,
-                                    _putPrimH(graph, {
-                                        MARGIN_UNIT
-                                        + MARGIN_UNIT * 2,
-                                        MARGIN_UNIT}),
-                                    0);
+void testTdConstructorsParComp (boolean first) {
+  console.log("******** test: parallel composition ********");
+  pushMatrix();
+  Transducer td = parCompPrimPairW(0, primH(UNIT_LENGTH * 2));
+  td.drawAll();
   td.debug(first);
-  Transducer td = _parCompPrimPairW(graph,
-                                    _putPrimH(graph, {
-                                        td.rightX + MARGIN_UNIT * 2
-                                        + MARGIN_UNIT * 2,
-                                        td.rightX + MARGIN_UNIT * 2}),
-                                    1);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = parCompPrimPairW(1, primH(UNIT_LENGTH * 2));
+  td.drawAll();
   td.debug(first);
-  td = _parCompPrimPairW(graph,
-                         _putPrimH(graph, {
-                             td.rightX + MARGIN_UNIT * 2
-                             + MARGIN_UNIT * 3,
-                             td.rightX + MARGIN_UNIT * 2}),
-                         1);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = parCompPrimPairW(1, primH(UNIT_LENGTH * 3));
+  td.drawAll();
   td.debug(first);
-  td = _parCompPrimPairW(graph,
-                         _parCompPrimPairW(graph,
-                                           _putPrimH(graph, {
-                                               td.rightX
-                                               + MARGIN_UNIT * 2
-                                               + MARGIN_UNIT * 2,
-                                               td.rightX
-                                               + MARGIN_UNIT * 2}),
-                                           0),
-                         0);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = parCompPrimPairW(0,
+                        parCompPrimPairW(0, primH(UNIT_LENGTH * 2)));
+  td.drawAll();
   td.debug(first);
-  graph.drawAll();
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = parCompTd(UNIT_LENGTH * 2, primK(3029486),
+                 parCompPrimPairW(1, primH(UNIT_LENGTH * 6)));
+  td.drawAll();
+  td.debug(first);
+  popMatrix();
 }
 
-void testTdConstructorsConnect (first) {
-  Graph graph = new Graph();
-  Transducer leftTd = _putPrimH(graph, {MARGIN_UNIT + MARGIN_UNIT * 2,
-                                        MARGIN_UNIT});
-  Transducer rightTd =
-    _seqCompPrimPairSplit(graph,
-                          _putPrimH(graph, {
-                              leftTd.rightX + MARGIN_UNIT
-                              + CROSS_INTERVAL
-                              + MARGIN_UNIT * 6,
-                              leftTd.rightX + MARGIN_UNIT
-                              + CROSS_INTERVAL}),
-                          0, PAIR_C);
-  Transducer td = _makeCross(graph, leftTd, 1, rightTd, 1);
+void testTdConstructorsConnect (boolean first) {
+  console.log("******** test: connection ********");
+  pushMatrix();
+  Transducer td =
+    makeCross(1,
+              primH(UNIT_LENGTH * 2),
+              1,
+              seqCompPrimPairSplit(0, PAIR_C,
+                                   primH(UNIT_LENGTH * 6)));
+  td.drawAll();
   td.debug(first);
-  td =
-    _makeSwapLoops(graph,
-                   _seqCompPrimPairSplit(graph,
-                                         _putPrimH(graph, {
-                                             td.rightX
-                                             + MARGIN_UNIT * 2
-                                             + MARGIN_UNIT * 6,
-                                             td.rightX
-                                             + MARGIN_UNIT * 2}),
-                                         0, PAIR_C),
-                   1,2);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = makeSwapLoops(1, 2,
+                     seqCompPrimPairSplit(0, PAIR_C,
+                                          primH(UNIT_LENGTH * 6)));
+  td.drawAll();
   td.debug(first);
-  td =
-    _makeSwapLoops(graph,
-                   _seqCompPrimPairSplit(graph,
-                                         _putPrimH(graph, {
-                                             td.rightX
-                                             + MARGIN_UNIT * 2
-                                             + MARGIN_UNIT * 6,
-                                             td.rightX
-                                             + MARGIN_UNIT * 2}),
-                                         0, PAIR_C),
-                   0,2);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = makeSwapLoops(0, 2,
+                     seqCompPrimPairSplit(0, PAIR_P,
+                                          primH(UNIT_LENGTH * 6)));
+  td.drawAll();
   td.debug(first);
-  td =
-    _makeLoop(graph,
-              _seqCompPrimPairSplit(graph,
-                                    _putPrimH(graph, {
-                                        td.rightX
-                                        + MARGIN_UNIT * 2
-                                        + MARGIN_UNIT * 6,
-                                        td.rightX
-                                        + MARGIN_UNIT * 2}),
-                                    0, PAIR_C),
-                   1);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = makeSwapLoops(0, 1,
+                     primSum(UNIT_LENGTH));
+  td.drawAll();
   td.debug(first);
-  graph.drawAll();
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = makeLoop(1,
+                seqCompPrimPairSplit(0, PAIR_P,
+                                     primH(UNIT_LENGTH * 6)));
+  td.drawAll();
+  td.debug(first);
+  popMatrix();
+}
+
+void testTdConstructorsAddBox (boolean first) {
+  console.log("******** test: box addition ********");
+  pushMatrix();
+  Transducer td =
+    addChoiceBox(0.4,
+                 primH(UNIT_LENGTH * 2),
+                 seqCompPrimPairSplit(0, PAIR_P,
+                                      primK(0)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addChoiceBox(0.00625,
+                    primSum(UNIT_LENGTH),
+                    seqCompPrimPairSplit(0, PAIR_C,
+                                         primH(UNIT_LENGTH * 4)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addBangBox(primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addBangBox(primSum(UNIT_LENGTH * 4));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addBangBox(seqCompPrimPairSplit(0, PAIR_C,
+                                       primK(0)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addBangBox(primK(0));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addBangBox(seqCompPrimPairSplit(0, PAIR_P,
+                                       primH(UNIT_LENGTH * 2)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addTermBox("term", {"x", "y"},
+                  seqCompPrimPairSplit(0, PAIR_P,
+                                       primH(UNIT_LENGTH * 2)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = addTermBox("termtermtermtermterm", {"x"},
+                  seqCompPrimPairSplit(0, PAIR_P,
+                                       primH(UNIT_LENGTH * 2)));
+  td.drawAll();
+  td.debug(first);
+  popMatrix();
 }
