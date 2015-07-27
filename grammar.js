@@ -18,6 +18,14 @@ Term.prototype.prettyPrint = function () {
     case "var": return this.freeVars[this.parameters[0]]; break;
     case "nat": return this.parameters[0]; break;
     case "unit": return "*"; break;
+    case "+1": 
+	return "(+ " + this.parameters[0] + " "
+	    + this.parameters[0] + ")";
+	break;
+    case "+2": 
+	return "(+ " + this.parameters[0] + " "
+	    + this.parameters[1] + ")";
+	break;
     case "match":
 	return "(match " + this.bodies[0].prettyPrint()
 	    + " ((inl " + this.parameters[0] + ") "
@@ -49,6 +57,30 @@ Term.prototype.prettyPrint = function () {
 	    break;
 	}
     }
+}
+
+function isEqual (term1, term2) {
+    if (term1.tag != term2.tag)
+	return false;
+    if (term1.parameters.length != term2.parameters.length)
+	return false;
+    for (var i = 0; i < term1.parameters.length; i++) {
+	if (term1.parameters[i] != term2.parameters[i])
+	    return false;
+    }
+    if (term1.bodies.length != term2.bodies.length)
+	return false;
+    for (var i = 0; i < term1.bodies.length; i++) {
+	if (!(isEqual(term1.bodies[i], term2.bodies[i])))
+	    return false;
+    }
+    if (term1.freeVars.length != term2.freeVars.length)
+	return false;
+    for (var i = 0; i < term1.freeVars.length; i++) {
+	if (term1.freeVars[i] != term2.freeVars[i])
+	    return false;
+    }
+    return true;
 }
 
 /* PEG Rules */

@@ -111,6 +111,7 @@ class Transducer {
   }
 
   void draw () {
+    for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
     for (int i = 0; i < ports.length; i++) {
       Port p = this.ports[i];
       if (p.visible) {
@@ -154,7 +155,6 @@ class Transducer {
       }
       this.ports[i].drawName();
     }
-    for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
   }
   
   void drawPorts () {

@@ -4,6 +4,8 @@ var term = undefined;
 var termReady = false;
 
 function isTermReady () { return termReady; }
+function termProcessed () { termReady = false; }
+
 function getTerm () { return term; }
 function setTerm () {
     try {
@@ -11,8 +13,9 @@ function setTerm () {
 	errMsg.textContent = null;
 	term =
 	    collectFreeVars(
-		parser.parse(
-		    document.getElementById("term").value));
+		eliminateTermSum(
+		    parser.parse(
+			document.getElementById("term").value)));
 	termReady = true;
     } catch (err) {
 	switch (err.name) {
@@ -26,6 +29,48 @@ function setTerm () {
 	    break;
 	}
     }
+}
+
+var count = 0;
+
+function eliminateTermSum (parsedTerm) {
+    if (parsedTerm.tag == "+") {
+	if (isEqual(parsedTerm.bodies[0], parsedTerm.bodies[1])) {
+	    var newVar = "C" + count;
+	    count++;
+	    var varSumFunc =
+		new Term("lambda", [newVar],
+			 [new Term("+1", [newVar], [])]);
+	    parsedTerm =
+		new Term("app", [],
+			 [varSumFunc,
+			  eliminateTermSum(parsedTerm.bodies[0])]);
+	} else {
+	    var newVarLeft = "L" + count;
+	    count++;
+	    var newVarRight = "R" + count;
+	    count++;
+	    var varSumFunc =
+		new Term("lambda", [newVarLeft],
+			 [new Term("lambda", [newVarRight],
+				   [new Term("+2",
+					     [newVarLeft,
+					      newVarRight], [])])]);
+	    parsedTerm =
+		new Term("app", [],
+			 [new Term("app", [],
+				   [varSumFunc,
+				    eliminateTermSum
+				    (parsedTerm.bodies[0])]),
+			  eliminateTermSum(parsedTerm.bodies[1])]);
+	}
+    } else {
+	for (var i = 0; i < parsedTerm.bodies.length; i++) {
+	    parsedTerm.bodies[i] =
+		eliminateTermSum(parsedTerm.bodies[i]);
+	}
+    }
+    return parsedTerm;
 }
 
 function collectFreeVars (parsedTerm) {
@@ -47,9 +92,11 @@ function collectFreeVars (parsedTerm) {
 	parsedTerm.bodies[0] = collectFreeVars(parsedTerm.bodies[0]);
 	break;
     case "match":
+	parsedTerm.bodies[0].freeVars = parsedTerm.freeVars;
+	parsedTerm.bodies[0] = collectFreeVars(parsedTerm.bodies[0]);
 	for (var i = 0; i <= 1; i++) {
 	    parsedTerm.bodies[i + 1].freeVars =
-		parsedTerm.freeVars.push(parsedTerm.parameters[i]);
+		parsedTerm.freeVars.concat(parsedTerm.parameters[i]);
 	    parsedTerm.bodies[i + 1] =
 		collectFreeVars(parsedTerm.bodies[i + 1]);
 	}

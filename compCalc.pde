@@ -516,7 +516,8 @@ Transducer seqCompPrimPairSplit (int portIndex, boolean pair,
     // portIndex-th ports have neighbors on the right
     boxHalfWidth = min(boxHalfWidth,
                        (td.getPort(td.inPortIds[portIndex - 1]).x
-                        - td.getPort(td.inPortIds[portIndex]).x) / 2);
+                        - td.getPort(td.inPortIds[portIndex]).x)
+                       * 3 / 4);
     // avoid overlapping with the right ports
   }
   if (portIndex < td.inPortIds.length - 1) {
@@ -524,7 +525,7 @@ Transducer seqCompPrimPairSplit (int portIndex, boolean pair,
     boxHalfWidth = min(boxHalfWidth,
                        (td.getPort(td.inPortIds[portIndex]).x
                         - td.getPort(td.inPortIds[portIndex + 1]).x)
-                       / 2);
+                       * 3 / 4);
     // avoid overlapping with the left ports
   }
   float boxHeight;
@@ -762,26 +763,26 @@ Transducer makeSwapLoops (int portRightIndex, int portLeftIndex,
   td.connectPorts(outRight, {inLeft},
                   {{td.getPort(outRight).x,
                         -td.tdHalfHeight - UNIT_LENGTH,
-                        td.tdWidth + UNIT_LENGTH,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL,
                         -td.tdHalfHeight - UNIT_LENGTH,
-                        td.tdWidth + UNIT_LENGTH,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL,
                         -swapHalfHeight,
-                        td.tdWidth + UNIT_LENGTH * 2,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL * 2,
                         swapHalfHeight,
-                        td.tdWidth + UNIT_LENGTH * 2,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL * 2,
                         td.tdHalfHeight + UNIT_LENGTH * 2,
                         td.getPort(inLeft).x,
                         td.tdHalfHeight + UNIT_LENGTH * 2}});
   td.connectPorts(outLeft, {inRight},
                   {{td.getPort(outLeft).x,
                         -td.tdHalfHeight - UNIT_LENGTH * 2,
-                        td.tdWidth + UNIT_LENGTH * 2,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL * 2,
                         -td.tdHalfHeight - UNIT_LENGTH * 2,
-                        td.tdWidth + UNIT_LENGTH * 2,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL * 2,
                         -swapHalfHeight,
-                        td.tdWidth + UNIT_LENGTH,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL,
                         swapHalfHeight,
-                        td.tdWidth + UNIT_LENGTH,
+                        td.tdWidth + SWAP_LOOP_X_INTERVAL,
                         td.tdHalfHeight + UNIT_LENGTH,
                         td.getPort(inRight).x,
                         td.tdHalfHeight + UNIT_LENGTH}});
@@ -789,7 +790,7 @@ Transducer makeSwapLoops (int portRightIndex, int portLeftIndex,
   td.removeOutPortId(portLeftIndex);
   td.removeInPortId(portRightIndex);
   td.removeOutPortId(portRightIndex);
-  td.tdWidth += UNIT_LENGTH * 2;
+  td.tdWidth += SWAP_LOOP_X_INTERVAL * 2;
   td.tdHalfHeight += UNIT_LENGTH * 2;
   return td;
 }
