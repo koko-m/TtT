@@ -661,6 +661,39 @@ Transducer parCompPrimPairW (int portIndex, Transducer td) {
   }
 }
 
+// pull out portIndex-th ports to the right
+Transducer pullOutPort (int portIndex, Transducer td) {
+  ///////////////////  ///////////////////
+  // |   td   |    //  //           out //
+  // |________|    //  //    ________|  //
+  //   |    |      //  //   |           //
+  //  inTd  .      //  //  outTd .      //
+  //   |________   //  //  _|____|_     //
+  //            |  //  // |        |    //
+  //           inn //  // |   td   |    //
+  ///////////////////  ///////////////////
+  if (portIndex == 0) return td;
+  int inTd = td.inPortIds[portIndex];
+  int outTd = td.outPortIds[portIndex];
+  float portX = td.tdWidth + UNIT_LENGTH;
+  float portY = td.tdHalfHeight + UNIT_LENGTH * 2;
+  int inn = td.addPort(new Port(portX, portY));
+  int out = td.addPort(new Port(portX, -portY));
+  td.connectPorts(inn, {inTd},
+                  {{portX, portY - UNIT_LENGTH,
+                        td.getPort(inTd).x, portY - UNIT_LENGTH}});
+  td.connectPorts(outTd, {out},
+                  {{td.getPort(outTd).x, -portY + UNIT_LENGTH,
+                        portX, -portY + UNIT_LENGTH}});
+  td.removeInPortId(portIndex);
+  td.removeOutPortId(portIndex);
+  td.insertInPortId(inn, 0);
+  td.insertOutPortId(out, 0);
+  td.tdWidth += UNIT_LENGTH;
+  td.tdHalfHeight = portY;
+  return td;
+}
+
 // combine rightTd in parallel with leftTd
 // this is destructive: rightTd is shifted and leftTd is combined
 Transducer parCompTd (float interval,

@@ -20,7 +20,7 @@ void draw () {
   testTdConstructorsPrim(first);
   translate(0, 80);
   testTdConstructorsSeqComp(first);
-  translate(0, 100);
+  translate(0, 120);
   testTdConstructorsParComp(first);
   translate(0, 120);
   testTdConstructorsConnect(first);

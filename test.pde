@@ -158,6 +158,20 @@ void testTdConstructorsParComp (boolean first) {
                  parCompPrimPairW(1, primH(UNIT_LENGTH * 6)));
   td.drawAll();
   td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = pullOutPort(1,
+                   parCompPrimPairW(1, primH(UNIT_LENGTH * 2)));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td =
+    pullOutPort(2,
+                parCompPrimPairW(0,
+                                 parCompPrimPairW(0,
+                                                  primH(UNIT_LENGTH
+                                                        * 2))));
+  td.drawAll();
+  td.debug(first);
   popMatrix();
 }
 
