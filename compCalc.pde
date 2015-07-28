@@ -622,7 +622,7 @@ Transducer seqCompPrimPairJoinLeft (int portRightIndex,
     //             |              //  //          |         |       //
     //          inLower           //  //          |   td    |       //
     ////////////////////////////////  ////////////////////////////////
-    float boxCenterX = td.getPort(inTdRight).x + UNIT_LENGTH;
+    float boxCenterX = td.getPort(inTdLeft).x + UNIT_LENGTH;
     float boxHalfWidth = UNIT_LENGTH * 2;
     if (portLeftIndex > 0) {
       // portLeftIndex-th ports have neighbors on the right

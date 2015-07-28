@@ -38,7 +38,7 @@ Transducer interpret (Object term) {
       (0, primH(PRIM_INTERVAL),
        numFV,
        addBangBox
-       (seqCompPrimPairJoin
+       (seqCompPrimPairJoinCenter
         (numFV, numFV + 1, PAIR_P, UNSWAP,
          interpret(term.bodies[0]))));
     break;
@@ -52,7 +52,7 @@ Transducer interpret (Object term) {
         seqCompPrimPairSplit
         (numFV + 1, PAIR_C,
          addBangBox
-         (seqCompPrimPairJoin
+         (seqCompPrimPairJoinCenter
           (numFV + 1, numFV + 2, PAIR_P, UNSWAP,
            interpret(term.bodies[0]))))));
     break;
@@ -63,7 +63,7 @@ Transducer interpret (Object term) {
        seqCompPrimPairSplit
        (numFV, PAIR_P, interpret(term.bodies[0])),
        numFV,
-       seqCompPrimPairJoin
+       seqCompPrimPairJoinCenter
        (numFV, numFV + 1, PAIR_P, UNSWAP,
         seqCompPrimPairE
         (numFV,
@@ -71,7 +71,7 @@ Transducer interpret (Object term) {
          (numFV, PAIR_P, interpret(term.bodies[1])))));
     td.debug(first);
     for (i = 0; i < numFV; i++) {
-      td = seqCompPrimPairJoin(i, numFV, PAIR_C, UNSWAP, td);
+      td = seqCompPrimPairJoinRight(i, numFV, PAIR_C, UNSWAP, td);
     }
     break;
   case "choose":
@@ -84,9 +84,9 @@ Transducer interpret (Object term) {
                    seqCompPrimPairSplit
                    (numFV, PAIR_P, interpret(term.bodies[0])),
                    0,
-                   seqCompPrimPairJoin
+                   seqCompPrimPairJoinCenter
                    (0, 1, PAIR_P, UNSWAP,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (0, 1, PAIR_P, UNSWAP,
                      parCompPrimPairW
                      (0, primH(PRIM_INTERVAL)))));
@@ -96,9 +96,9 @@ Transducer interpret (Object term) {
                    seqCompPrimPairSplit
                    (numFV, PAIR_P, interpret(term.bodies[0])),
                    0,
-                   seqCompPrimPairJoin
+                   seqCompPrimPairJoinCenter
                    (0, 1, PAIR_P, UNSWAP,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (0, 1, PAIR_P, UNSWAP,
                      parCompPrimPairW
                      (1, primH(PRIM_INTERVAL)))));
@@ -113,14 +113,14 @@ Transducer interpret (Object term) {
                     seqCompPrimPairSplit
                     (numFV, PAIR_P, interpret(term.bodies[1]))),
                    0,
-                   seqCompPrimPairJoin
+                   seqCompPrimPairJoinCenter
                    (0, 1, PAIR_P, UNSWAP,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (1, 2, PAIR_P, UNSWAP,
                      seqCompPrimPairSplit
                      (0, PAIR_P, primH(PRIM_INTERVAL)))));
     for (i = 0; i < numFV; i++) {
-      td = seqCompPrimPairJoin(i, numFV, PAIR_C, UNSWAP, td);
+      td = seqCompPrimPairJoinRight(i, numFV, PAIR_C, UNSWAP, td);
     }
     break;
   case "inl":
@@ -130,14 +130,14 @@ Transducer interpret (Object term) {
                    0,
                    makeCross
                    (0,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (1, 2, PAIR_P, UNSWAP,
                      seqCompPrimPairSplit
                      (0, PAIR_P, primH(PRIM_INTERVAL))),
                     0,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (0, 1, PAIR_P, UNSWAP,
-                     seqCompPrimPairJoin
+                     seqCompPrimPairJoinCenter
                      (0, 1, PAIR_P, UNSWAP,
                       parCompPrimPairW
                       (0, primSwap(PRIM_INTERVAL))))));
@@ -149,14 +149,14 @@ Transducer interpret (Object term) {
                    0,
                    makeCross
                    (0,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (1, 2, PAIR_P, UNSWAP,
                      seqCompPrimPairSplit
                      (0, PAIR_P, primH(PRIM_INTERVAL))),
                     0,
-                    seqCompPrimPairJoin
+                    seqCompPrimPairJoinCenter
                     (0, 1, PAIR_P, UNSWAP,
-                     seqCompPrimPairJoin
+                     seqCompPrimPairJoinCenter
                      (0, 1, PAIR_P, UNSWAP,
                       parCompPrimPairW
                       (1, primSwap(PRIM_INTERVAL))))));
@@ -167,7 +167,7 @@ Transducer interpret (Object term) {
       (numFV,
        makeSwapLoops
        (numFV + 1, numFV + 2,
-        seqCompPrimPairJoin
+        seqCompPrimPairJoinCenter
         (numFV + 2, numFV + 3, PAIR_P, UNSWAP,
          seqCompPrimPairSplit
          (numFV, PAIR_P,
@@ -178,26 +178,26 @@ Transducer interpret (Object term) {
             seqCompPrimPairSplit
             (numFV, PAIR_P, interpret(term.bodies[0]))))))),
        numFV,
-       seqCompPrimPairJoin
+       seqCompPrimPairJoinLeft
        (numFV, numFV * 2 + 1, PAIR_P, UNSWAP,
         parCompTd
         (CROSS_INTERVAL / 2,
-         seqCompPrimPairJoin
+         seqCompPrimPairJoinCenter
          (numFV, numFV + 1, PAIR_P, UNSWAP,
           interpret(term.bodies[1])),
-         seqCompPrimPairJoin
+         seqCompPrimPairJoinCenter
          (numFV, numFV + 1, PAIR_P, UNSWAP,
           interpret(term.bodies[2])))));
     for (i = 0; i < numFV; i++) {
-      td = seqCompPrimPairJoin(i, numFV, PAIR_C, UNSWAP, td);
+      td = seqCompPrimPairJoinRight(i, numFV, PAIR_C, UNSWAP, td);
     }
     for (i = 0; i < numFV; i++) {
-      td = seqCompPrimPairJoin(i, numFV, PAIR_C, SWAP, td);
+      td = seqCompPrimPairJoinRight(i, numFV, PAIR_C, SWAP, td);
     }
     break;
   case "+1":
     td = 
-      seqCompPrimPairJoin
+      seqCompPrimPairJoinCenter
       (0, 1, PAIR_C, UNSWAP,
        makeCross(0, primH(PRIM_INTERVAL),
                  2, primSum(UNIT_LENGTH * 2)));
