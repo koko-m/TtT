@@ -1,16 +1,10 @@
-void setup () {
-  size(1000,1000);
-  background(#b3adaa);
-  frameRate(20);
-}
-
 int count = 0;
 bool run = true;
 int x = 1000;
 
 boolean first = true;
 
-void draw () {
+void testDraw () {
   background(#b3adaa);
   // textAlign(LEFT, BOTTOM);
   // text("Click to pause/restart!", 100, 50);
@@ -21,6 +15,8 @@ void draw () {
   testTdConstructorsPrim(first);
   translate(0, 80);
   testTdConstructorsSeqComp(first);
+  translate(0, 120);
+  testTdConstructorsSeqCompJoin(first);
   translate(0, 120);
   testTdConstructorsParComp(first);
   translate(0, 120);
@@ -109,51 +105,6 @@ void testTdConstructorsSeqComp (boolean first) {
   td.drawAll();
   td.debug(first);
   translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 1, PAIR_P, SWAP,
-                           primH(UNIT_LENGTH * 6));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(1, 2, PAIR_P, UNSWAP,
-                           primSum(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 1, PAIR_P, UNSWAP,
-                           primSwap(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 1, PAIR_C, SWAP,
-                           primSum(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 1, PAIR_C, UNSWAP,
-                           primSwap(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 2, PAIR_P, SWAP,
-                           primSum(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 2, PAIR_C, SWAP,
-                           primSum(UNIT_LENGTH * 2));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 2, PAIR_P, UNSWAP,
-                           primSum(UNIT_LENGTH * 2));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
-  td = seqCompPrimPairJoin(0, 2, PAIR_C, UNSWAP,
-                           primSum(UNIT_LENGTH));
-  td.drawAll();
-  td.debug(first);
-  translate(td.tdWidth + UNIT_LENGTH, 0);
   td = seqCompPrimPairSplit(1, PAIR_P,
                             primSum(UNIT_LENGTH));
   td.drawAll();
@@ -166,6 +117,92 @@ void testTdConstructorsSeqComp (boolean first) {
   translate(td.tdWidth + UNIT_LENGTH, 0);
   td = seqCompPrimPairSplit(0, PAIR_C,
                             primH(UNIT_LENGTH * 5));
+  td.drawAll();
+  td.debug(first);
+  popMatrix();
+}
+
+void testTdConstructorsSeqCompJoin (boolean first) {
+  console.log("******** test: sequential composition; join ********");
+  pushMatrix();
+  Transducer td = seqCompPrimPairJoinCenter(0, 2, PAIR_P, UNSWAP,
+                                            primSum(UNIT_LENGTH * 2));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinCenter(1, 2, PAIR_P, UNSWAP,
+                                 primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinCenter(0, 1, PAIR_P, UNSWAP,
+                                 primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 2, PAIR_P, UNSWAP,
+                                primSum(UNIT_LENGTH * 2));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(1, 2, PAIR_P, UNSWAP,
+                                primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 1, PAIR_P, UNSWAP,
+                                primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinLeft(0, 2, PAIR_P, UNSWAP,
+                               primSum(UNIT_LENGTH * 2));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinLeft(1, 2, PAIR_P, UNSWAP,
+                               primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinLeft(0, 1, PAIR_P, UNSWAP,
+                               primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 1, PAIR_P, SWAP,
+                                primH(UNIT_LENGTH * 6));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinLeft(0, 1, PAIR_P, UNSWAP,
+                               primSwap(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 1, PAIR_C, SWAP,
+                                primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 1, PAIR_C, UNSWAP,
+                                primSwap(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 2, PAIR_P, SWAP,
+                                primSum(UNIT_LENGTH));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinLeft(0, 2, PAIR_C, SWAP,
+                               primSum(UNIT_LENGTH * 2));
+  td.drawAll();
+  td.debug(first);
+  translate(td.tdWidth + UNIT_LENGTH, 0);
+  td = seqCompPrimPairJoinRight(0, 2, PAIR_C, UNSWAP,
+                                primSum(UNIT_LENGTH));
   td.drawAll();
   td.debug(first);
   popMatrix();

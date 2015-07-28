@@ -7,6 +7,7 @@ void setup () {
 boolean first = true;
 
 void draw () {
+  testDraw();
   if (isTermReady()) {
     background(#b3adaa);
     pushMatrix();

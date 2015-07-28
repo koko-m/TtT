@@ -152,133 +152,141 @@ boolean UNSWAP = false;
 
 // sequentially compose the primitive pair (phi,psi) or (c,c') at the
 // portLeftIndex-ports and the portRightIndex-ports
+// the pair is put in the center of given two ports
 // psi or c' is lower: the ports are joined
-Transducer seqCompPrimPairJoin (int portRightIndex, int portLeftIndex,
-                                boolean pair, boolean swap,
-                                Transducer td) {
+Transducer seqCompPrimPairJoinCenter (int portRightIndex,
+                                      int portLeftIndex,
+                                      boolean pair, boolean swap,
+                                      Transducer td) {
   int inTdRight = td.inPortIds[portRightIndex];
   int outTdRight = td.outPortIds[portRightIndex];
   int inTdLeft = td.inPortIds[portLeftIndex];
   int outTdLeft = td.outPortIds[portLeftIndex];
-  if (portRightIndex == portLeftIndex - 1) {
-    // portRightIndex-th ports and portLeftIndex-th ports are next to
-    // each other
-    // put each of the pair in the center of given two ports
-    ////////////////////////////////  ////////////////////////////////
-    //        |   td    |         //  //          outUpper          //
-    //        |_________|         //  //           __|__            //
-    //            | |             //  //          |     | phi or c  //
-    //     inTdLeft inTdRight     //  //          |_____|           //
-    //            | |             //  //            | |             //
-    //    (swapping, possibly)    //  //  inUpperLeft inUpperRight  //
-    //            | |             //  //            | |             //
-    // outLowerLeft outLowerRight //  //    (swapping, possibly)    //
-    //           _|_|_            //  //            | |             //
-    //          |     |           //  //    outTdLeft outTdRight    //
-    //          |_____| psi or c' //  //         ___|_|___          //
-    //             |              //  //        |         |         //
-    //          inLower           //  //        |   td    |         //
-    ////////////////////////////////  ////////////////////////////////
-    float boxCenterX =
-      (td.getPort(inTdRight).x + td.getPort(inTdLeft).x) / 2;
-    float widthMargin = UNIT_LENGTH;
-    if (portRightIndex > 0) {
-      // portRightIndex-th ports have neighbors on the right
-      widthMargin =
-        min(widthMargin,
-            (td.getPort(td.inPortIds[portRightIndex - 1]).x
-             - td.getPort(td.inPortIds[portRightIndex]).x) / 2);
-      // avoid overlapping with the right ports
-    }
-    if (portLeftIndex < td.inPortIds.length - 1) {
-      // portLeftIndex-th ports have neighbors on the left
-      widthMargin =
-        min(widthMargin,
-            (td.getPort(td.inPortIds[portLeftIndex]).x
-             - td.getPort(td.inPortIds[portLeftIndex + 1]).x) / 2);
-      // avoid overlapping with the left ports
-    }
-    float boxHalfWidth =
-      (td.getPort(inTdRight).x - td.getPort(inTdLeft).x) / 2
-      + widthMargin;
-    float boxHeight;
-    switch (pair) {
-    case PAIR_P: boxHeight = UNIT_LENGTH; break;
-    case PAIR_C: boxHeight = UNIT_LENGTH * 2; break;
-    }
-    float boxBottomY = td.tdHalfHeight + UNIT_LENGTH + boxHeight;
-    if (swap) boxBottomY += UNIT_LENGTH * 2;
-    switch (pair) {
-    case PAIR_P:
-      td.addBox(new Box(TRI_PAIR_JOIN, {},
-                        boxCenterX - boxHalfWidth, boxBottomY,
-                        boxHalfWidth * 2, boxHeight));
-      break;
-    case PAIR_C:
-      td.addBox(new Box(LABELED_RECT_PAIR, {"c'", "c"},
-                        boxCenterX - boxHalfWidth, boxBottomY,
-                        boxHalfWidth * 2, boxHeight));
-      break;
-    }
-    int inLower = td.addPort(new Port(boxCenterX, boxBottomY,
-                                      HIDDEN));
-    int outLowerRight = td.addPort(new Port(td.getPort(inTdRight).x,
-                                            boxBottomY - boxHeight));
-    int outLowerLeft = td.addPort(new Port(td.getPort(inTdLeft).x,
-                                           boxBottomY - boxHeight));
-    int inUpperRight = td.addPort(new Port(td.getPort(outTdRight).x,
-                                           -boxBottomY + boxHeight,
-                                           HIDDEN));
-    int inUpperLeft = td.addPort(new Port(td.getPort(outTdLeft).x,
-                                          -boxBottomY + boxHeight,
-                                          HIDDEN));
-    int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
-    td.connectPorts(inLower, {outLowerRight, outLowerLeft});
-    if (swap) {
-      td.connectPorts(outLowerRight, {inTdLeft},
-                      {{td.getPort(inTdRight).x,
-                            td.tdHalfHeight + UNIT_LENGTH * 2,
-                            td.getPort(inTdLeft).x,
-                            td.tdHalfHeight + UNIT_LENGTH}});
-      td.connectPorts(outLowerLeft, {inTdRight},
-                      {{td.getPort(inTdLeft).x,
-                            td.tdHalfHeight + UNIT_LENGTH * 2,
-                            td.getPort(inTdRight).x,
-                            td.tdHalfHeight + UNIT_LENGTH}});
-      td.connectPorts(outTdRight, {inUpperLeft},
-                      {{td.getPort(inTdRight).x,
-                            - td.tdHalfHeight - UNIT_LENGTH,
-                            td.getPort(inTdLeft).x,
-                            -td.tdHalfHeight - UNIT_LENGTH * 2}});
-      td.connectPorts(outTdLeft, {inUpperRight},
-                      {{td.getPort(inTdLeft).x,
-                            - td.tdHalfHeight - UNIT_LENGTH,
-                            td.getPort(inTdRight).x,
-                            -td.tdHalfHeight - UNIT_LENGTH * 2}});
-    } else {
-      td.connectPorts(outLowerRight, {inTdRight});
-      td.connectPorts(outLowerLeft, {inTdLeft});
-      td.connectPorts(outTdRight, {inUpperRight});
-      td.connectPorts(outTdLeft, {inUpperLeft});
-    }
-    td.connectPorts(inUpperRight, {outUpper});
-    td.connectPorts(inUpperLeft, {outUpper});
-    td.replaceInPortId(portRightIndex, inLower);
-    td.removeInPortId(portLeftIndex);
-    td.replaceOutPortId(portRightIndex, outUpper);
-    td.removeOutPortId(portLeftIndex);
-    td.tdWidth = max(td.tdWidth, boxCenterX + boxHalfWidth);
-    if (boxCenterX - boxHalfWidth < 0) {
-      td.shiftX(-(boxCenterX - boxHalfWidth));
-      td.tdWidth += -(boxCenterX - boxHalfWidth);
-    }
-    td.tdHalfHeight = boxBottomY;
-    return td;
-  } else if (swap) {
-    // portRightIndex-th ports and portLeftIndex-th ports are *not*
-    // next to each other
-    // put each of the pair near portRightIndex-th ports, with
-    // composing swappings
+  ////////////////////////////////  ////////////////////////////////
+  //        |   td    |         //  //          outUpper          //
+  //        |_________|         //  //           __|__            //
+  //            | |             //  //          |     | phi or c  //
+  //     inTdLeft inTdRight     //  //          |_____|           //
+  //            | |             //  //            | |             //
+  //    (swapping, possibly)    //  //  inUpperLeft inUpperRight  //
+  //            | |             //  //            | |             //
+  // outLowerLeft outLowerRight //  //    (swapping, possibly)    //
+  //           _|_|_            //  //            | |             //
+  //          |     |           //  //    outTdLeft outTdRight    //
+  //          |_____| psi or c' //  //         ___|_|___          //
+  //             |              //  //        |         |         //
+  //          inLower           //  //        |   td    |         //
+  ////////////////////////////////  ////////////////////////////////
+  float boxCenterX =
+    (td.getPort(inTdRight).x + td.getPort(inTdLeft).x) / 2;
+  float widthMargin = UNIT_LENGTH;
+  if (portRightIndex > 0) {
+    // portRightIndex-th ports have neighbors on the right
+    widthMargin =
+      min(widthMargin,
+          (td.getPort(td.inPortIds[portRightIndex - 1]).x
+           - td.getPort(td.inPortIds[portRightIndex]).x) / 2);
+    // avoid overlapping with the right ports
+  }
+  if (portLeftIndex < td.inPortIds.length - 1) {
+    // portLeftIndex-th ports have neighbors on the left
+    widthMargin =
+      min(widthMargin,
+          (td.getPort(td.inPortIds[portLeftIndex]).x
+           - td.getPort(td.inPortIds[portLeftIndex + 1]).x) / 2);
+    // avoid overlapping with the left ports
+  }
+  float boxHalfWidth =
+    (td.getPort(inTdRight).x - td.getPort(inTdLeft).x) / 2
+    + widthMargin;
+  float boxHeight;
+  switch (pair) {
+  case PAIR_P: boxHeight = UNIT_LENGTH; break;
+  case PAIR_C: boxHeight = UNIT_LENGTH * 2; break;
+  }
+  float boxBottomY = td.tdHalfHeight + UNIT_LENGTH + boxHeight;
+  if (swap) boxBottomY += UNIT_LENGTH * 2;
+  switch (pair) {
+  case PAIR_P:
+    td.addBox(new Box(TRI_PAIR_JOIN, {},
+                      boxCenterX - boxHalfWidth, boxBottomY,
+                      boxHalfWidth * 2, boxHeight));
+    break;
+  case PAIR_C:
+    td.addBox(new Box(LABELED_RECT_PAIR, {"c'", "c"},
+                      boxCenterX - boxHalfWidth, boxBottomY,
+                      boxHalfWidth * 2, boxHeight));
+    break;
+  }
+  int inLower = td.addPort(new Port(boxCenterX, boxBottomY,
+                                    HIDDEN));
+  int outLowerRight = td.addPort(new Port(td.getPort(inTdRight).x,
+                                          boxBottomY - boxHeight));
+  int outLowerLeft = td.addPort(new Port(td.getPort(inTdLeft).x,
+                                         boxBottomY - boxHeight));
+  int inUpperRight = td.addPort(new Port(td.getPort(outTdRight).x,
+                                         -boxBottomY + boxHeight,
+                                         HIDDEN));
+  int inUpperLeft = td.addPort(new Port(td.getPort(outTdLeft).x,
+                                        -boxBottomY + boxHeight,
+                                        HIDDEN));
+  int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+  td.connectPorts(inLower, {outLowerRight, outLowerLeft});
+  if (swap) {
+    td.connectPorts(outLowerRight, {inTdLeft},
+                    {{td.getPort(inTdRight).x,
+                          td.tdHalfHeight + UNIT_LENGTH * 2,
+                          td.getPort(inTdLeft).x,
+                          td.tdHalfHeight + UNIT_LENGTH}});
+    td.connectPorts(outLowerLeft, {inTdRight},
+                    {{td.getPort(inTdLeft).x,
+                          td.tdHalfHeight + UNIT_LENGTH * 2,
+                          td.getPort(inTdRight).x,
+                          td.tdHalfHeight + UNIT_LENGTH}});
+    td.connectPorts(outTdRight, {inUpperLeft},
+                    {{td.getPort(inTdRight).x,
+                          - td.tdHalfHeight - UNIT_LENGTH,
+                          td.getPort(inTdLeft).x,
+                          -td.tdHalfHeight - UNIT_LENGTH * 2}});
+    td.connectPorts(outTdLeft, {inUpperRight},
+                    {{td.getPort(inTdLeft).x,
+                          - td.tdHalfHeight - UNIT_LENGTH,
+                          td.getPort(inTdRight).x,
+                          -td.tdHalfHeight - UNIT_LENGTH * 2}});
+  } else {
+    td.connectPorts(outLowerRight, {inTdRight});
+    td.connectPorts(outLowerLeft, {inTdLeft});
+    td.connectPorts(outTdRight, {inUpperRight});
+    td.connectPorts(outTdLeft, {inUpperLeft});
+  }
+  td.connectPorts(inUpperRight, {outUpper});
+  td.connectPorts(inUpperLeft, {outUpper});
+  td.replaceInPortId(portRightIndex, inLower);
+  td.removeInPortId(portLeftIndex);
+  td.replaceOutPortId(portRightIndex, outUpper);
+  td.removeOutPortId(portLeftIndex);
+  td.tdWidth = max(td.tdWidth, boxCenterX + boxHalfWidth);
+  if (boxCenterX - boxHalfWidth < 0) {
+    td.shiftX(-(boxCenterX - boxHalfWidth));
+    td.tdWidth += -(boxCenterX - boxHalfWidth);
+  }
+  td.tdHalfHeight = boxBottomY;
+  return td;
+}
+
+// sequentially compose the primitive pair (phi,psi) or (c,c') at the
+// portLeftIndex-ports and the portRightIndex-ports
+// the pair is put near the portRightIndex-ports
+// psi or c' is lower: the ports are joined
+Transducer seqCompPrimPairJoinRight (int portRightIndex,
+                                     int portLeftIndex,
+                                     boolean pair, boolean swap,
+                                     Transducer td) {
+  int inTdRight = td.inPortIds[portRightIndex];
+  int outTdRight = td.outPortIds[portRightIndex];
+  int inTdLeft = td.inPortIds[portLeftIndex];
+  int outTdLeft = td.outPortIds[portLeftIndex];
+  if (swap) {
     ////////////////////////////////  ////////////////////////////////
     //    |   td    |             //  //          outUpper          //
     //    |_________|             //  //           __|__            //
@@ -381,10 +389,6 @@ Transducer seqCompPrimPairJoin (int portRightIndex, int portLeftIndex,
     td.tdHalfHeight = boxBottomY;
     return td;
   } else {
-    // portRightIndex-th ports and portLeftIndex-th ports are *not*
-    // next to each other
-    // put each of the pair near portRightIndex-th ports, *without*
-    // composing swappings
     ////////////////////////////////  ////////////////////////////////
     //      |   td    |           //  //          outUpper          //
     //      |_________|           //  //           __|__            //
@@ -467,12 +471,231 @@ Transducer seqCompPrimPairJoin (int portRightIndex, int portLeftIndex,
                           td.tdHalfHeight + UNIT_LENGTH,
                           td.getPort(inTdLeft).x,
                           td.tdHalfHeight + UNIT_LENGTH}});
+    td.connectPorts(outTdRight, {inUpperRight});
     td.connectPorts(outTdLeft, {inUpperLeft},
                     {{td.getPort(outTdLeft).x,
                           -td.tdHalfHeight - UNIT_LENGTH,
                           boxCenterX - boxHalfWidth / 2,
                           -td.tdHalfHeight - UNIT_LENGTH}});
-    td.connectPorts(outTdRight, {inUpperRight});
+    td.connectPorts(inUpperRight, {outUpper});
+    td.connectPorts(inUpperLeft, {outUpper});
+    td.replaceInPortId(portRightIndex, inLower);
+    td.removeInPortId(portLeftIndex);
+    td.replaceOutPortId(portRightIndex, outUpper);
+    td.removeOutPortId(portLeftIndex);
+    td.tdWidth = max(td.tdWidth, boxCenterX + boxHalfWidth);
+    if (boxCenterX - boxHalfWidth < 0) {
+      td.shiftX(-(boxCenterX - boxHalfWidth));
+      td.tdWidth += -(boxCenterX - boxHalfWidth);
+    }
+    td.tdHalfHeight = boxBottomY;
+    return td;
+  }
+}
+
+// sequentially compose the primitive pair (phi,psi) or (c,c') at the
+// portLeftIndex-ports and the portRightIndex-ports
+// the pair is put near the portLeftIndex-ports
+// psi or c' is lower: the ports are joined
+Transducer seqCompPrimPairJoinLeft (int portRightIndex,
+                                    int portLeftIndex,
+                                    boolean pair, boolean swap,
+                                    Transducer td) {
+  int inTdRight = td.inPortIds[portRightIndex];
+  int outTdRight = td.outPortIds[portRightIndex];
+  int inTdLeft = td.inPortIds[portLeftIndex];
+  int outTdLeft = td.outPortIds[portLeftIndex];
+  if (swap) {
+    ////////////////////////////////  ////////////////////////////////
+    //            |   td    |     //  //         outUpper           //
+    //            |_________|     //  //           __|__            //
+    //              |     |       //  //          |     | phi or c  //
+    //       inTdLeft  inTdRight  //  //          |_____|           //
+    //             _|_____|       //  //            | |             //
+    //            | |             //  //  inUpperLeft inUpperRight  //
+    // outLowerLeft outLowerRight //  //            |_|_____        //
+    //           _|_|_            //  //              |     |       //
+    //          |     |           //  //      outTdLeft  outTdRight //
+    //          |_____| psi or c' //  //             _|_____|_      //
+    //             |              //  //            |         |     //
+    //          inLower           //  //            |   td    |     //
+    ////////////////////////////////  ////////////////////////////////
+    float boxCenterX = td.getPort(inTdLeft).x - UNIT_LENGTH;
+    float boxHalfWidth = UNIT_LENGTH * 2;
+    if (portLeftIndex > 0) {
+      // portLeftIndex-th ports have neighbors on the right
+      boxCenterX =
+        max(boxCenterX,
+            td.getPort(inTdLeft).x
+            - (td.getPort(td.inPortIds[portLeftIndex - 1]).x
+               - td.getPort(td.inPortIds[portLeftIndex]).x) / 2);
+      boxHalfWidth =
+        min(boxHalfWidth,
+            td.getPort(td.inPortIds[portLeftIndex - 1]).x
+            - td.getPort(td.inPortIds[portLeftIndex]).x);
+      // avoid overlapping with the right ports
+    }
+    if (portLeftIndex < td.inPortIds.length - 1) {
+      // portLeftIndex-th ports have neighbors on the left
+      boxCenterX =
+        max(boxCenterX,
+            td.getPort(inTdLeft).x
+            - (td.getPort(td.inPortIds[portLeftIndex]).x
+               - td.getPort(td.inPortIds[portLeftIndex + 1]).x) / 4);
+      boxHalfWidth =
+        min(boxHalfWidth,
+            (td.getPort(td.inPortIds[portLeftIndex]).x
+             - td.getPort(td.inPortIds[portLeftIndex + 1]).x) / 2);
+      // avoid overlapping with the left ports
+    }
+    float boxHeight;
+    switch (pair) {
+    case PAIR_P: boxHeight = UNIT_LENGTH; break;
+    case PAIR_C: boxHeight = UNIT_LENGTH * 2; break;
+    }
+    float boxBottomY = td.tdHalfHeight + UNIT_LENGTH * 2 + boxHeight;
+    switch (pair) {
+    case PAIR_P:
+      td.addBox(new Box(TRI_PAIR_JOIN, {},
+                        boxCenterX - boxHalfWidth, boxBottomY,
+                        boxHalfWidth * 2, boxHeight));
+      break;
+    case PAIR_C:
+      td.addBox(new Box(LABELED_RECT_PAIR, {"c'", "c"},
+                        boxCenterX - boxHalfWidth, boxBottomY,
+                        boxHalfWidth * 2, boxHeight));
+      break;
+    }
+    int inLower = td.addPort(new Port(boxCenterX, boxBottomY,
+                                      HIDDEN));
+    int outLowerRight = td.addPort(new Port(td.getPort(inTdLeft).x,
+                                            boxBottomY - boxHeight));
+    int outLowerLeft = td.addPort(new Port(boxCenterX
+                                           - boxHalfWidth / 2,
+                                           boxBottomY - boxHeight));
+    int inUpperRight = td.addPort(new Port(td.getPort(outTdLeft).x,
+                                           -boxBottomY + boxHeight,
+                                           HIDDEN));
+    int inUpperLeft = td.addPort(new Port(boxCenterX
+                                          - boxHalfWidth / 2,
+                                          -boxBottomY + boxHeight,
+                                          HIDDEN));
+    int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    td.connectPorts(inLower, {outLowerRight, outLowerLeft});
+    td.connectPorts(outLowerRight, {inTdLeft});
+    td.connectPorts(outLowerLeft, {inTdRight},
+                    {{boxCenterX - boxHalfWidth / 2,
+                          td.tdHalfHeight + UNIT_LENGTH,
+                          td.getPort(inTdRight).x,
+                          td.tdHalfHeight + UNIT_LENGTH}});
+    td.connectPorts(outTdRight, {inUpperLeft},
+                    {{td.getPort(outTdRight).x,
+                          -td.tdHalfHeight - UNIT_LENGTH,
+                          boxCenterX - boxHalfWidth / 2,
+                          -td.tdHalfHeight - UNIT_LENGTH}});
+    td.connectPorts(outTdLeft, {inUpperRight});
+    td.connectPorts(inUpperRight, {outUpper});
+    td.connectPorts(inUpperLeft, {outUpper});
+    td.replaceInPortId(portRightIndex, inLower);
+    td.removeInPortId(portLeftIndex);
+    td.replaceOutPortId(portRightIndex, outUpper);
+    td.removeOutPortId(portLeftIndex);
+    td.tdWidth = max(td.tdWidth, boxCenterX + boxHalfWidth);
+    if (boxCenterX - boxHalfWidth < 0) {
+      td.shiftX(-(boxCenterX - boxHalfWidth));
+      td.tdWidth += -(boxCenterX - boxHalfWidth);
+    }
+    td.tdHalfHeight = boxBottomY;
+    return td;
+  } else {
+    ////////////////////////////////  ////////////////////////////////
+    //          |   td    |       //  //         outUpper           //
+    //          |_________|       //  //           __|__            //
+    //            |     |         //  //          |     | phi or c  //
+    //     inTdLeft  inTdRight    //  //          |_____|           //
+    //            |  ___|         //  //            | |             //
+    //            | |             //  //  inUpperLeft inUpperRight  //
+    // outLowerLeft outLowerRight //  //            | |___          //
+    //           _|_|_            //  //            |     |         //
+    //          |     |           //  //    outTdLeft  outTdRight   //
+    //          |_____| psi or c' //  //           _|_____|_        //
+    //             |              //  //          |         |       //
+    //          inLower           //  //          |   td    |       //
+    ////////////////////////////////  ////////////////////////////////
+    float boxCenterX = td.getPort(inTdRight).x + UNIT_LENGTH;
+    float boxHalfWidth = UNIT_LENGTH * 2;
+    if (portLeftIndex > 0) {
+      // portLeftIndex-th ports have neighbors on the right
+      boxCenterX =
+        min(boxCenterX,
+            td.getPort(inTdLeft).x
+            + (td.getPort(td.inPortIds[portLeftIndex - 1]).x
+               - td.getPort(td.inPortIds[portLeftIndex]).x) / 4);
+      boxHalfWidth =
+        min(boxHalfWidth,
+            (td.getPort(td.inPortIds[portLeftIndex - 1]).x
+             - td.getPort(td.inPortIds[portLeftIndex]).x) / 2);
+      // avoid overlapping with the right ports
+    }
+    if (portLeftIndex < td.inPortIds.length - 1) {
+      // portLeftIndex-th ports have neighbors on the left
+      boxCenterX =
+        min(boxCenterX,
+            td.getPort(inTdLeft).x
+            + (td.getPort(td.inPortIds[portLeftIndex]).x
+               - td.getPort(td.inPortIds[portLeftIndex + 1]).x) / 2);
+      boxHalfWidth =
+        min(boxHalfWidth,
+            td.getPort(td.inPortIds[portLeftIndex]).x
+            - td.getPort(td.inPortIds[portLeftIndex + 1]).x);
+      // avoid overlapping with the left ports
+    }
+    float boxHeight;
+    switch (pair) {
+    case PAIR_P: boxHeight = UNIT_LENGTH; break;
+    case PAIR_C: boxHeight = UNIT_LENGTH * 2; break;
+    }
+    float boxBottomY = td.tdHalfHeight + UNIT_LENGTH * 2 + boxHeight;
+    switch (pair) {
+    case PAIR_P:
+      td.addBox(new Box(TRI_PAIR_JOIN, {},
+                        boxCenterX - boxHalfWidth, boxBottomY,
+                        boxHalfWidth * 2, boxHeight));
+      break;
+    case PAIR_C:
+      td.addBox(new Box(LABELED_RECT_PAIR, {"c'", "c"},
+                        boxCenterX - boxHalfWidth, boxBottomY,
+                        boxHalfWidth * 2, boxHeight));
+      break;
+    }
+    int inLower = td.addPort(new Port(boxCenterX, boxBottomY,
+                                      HIDDEN));
+    int outLowerRight = td.addPort(new Port(boxCenterX
+                                            + boxHalfWidth / 2,
+                                            boxBottomY - boxHeight));
+    int outLowerLeft = td.addPort(new Port(td.getPort(inTdLeft).x,
+                                           boxBottomY - boxHeight));
+    int inUpperRight = td.addPort(new Port(boxCenterX
+                                           + boxHalfWidth / 2,
+                                           -boxBottomY + boxHeight,
+                                           HIDDEN));
+    int inUpperLeft = td.addPort(new Port(td.getPort(outTdLeft).x,
+                                          -boxBottomY + boxHeight,
+                                          HIDDEN));
+    int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    td.connectPorts(inLower, {outLowerRight, outLowerLeft});
+    td.connectPorts(outLowerRight, {inTdRight},
+                    {{boxCenterX + boxHalfWidth / 2,
+                          td.tdHalfHeight + UNIT_LENGTH,
+                          td.getPort(inTdRight).x,
+                          td.tdHalfHeight + UNIT_LENGTH}});
+    td.connectPorts(outLowerLeft, {inTdLeft});
+    td.connectPorts(outTdRight, {inUpperRight},
+                    {{td.getPort(outTdRight).x,
+                          -td.tdHalfHeight - UNIT_LENGTH,
+                          boxCenterX + boxHalfWidth / 2,
+                          -td.tdHalfHeight - UNIT_LENGTH}});
+    td.connectPorts(outTdLeft, {inUpperLeft});
     td.connectPorts(inUpperRight, {outUpper});
     td.connectPorts(inUpperLeft, {outUpper});
     td.replaceInPortId(portRightIndex, inLower);
