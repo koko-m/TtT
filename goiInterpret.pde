@@ -69,7 +69,6 @@ Transducer interpret (Object term) {
         (numFV,
          seqCompPrimPairSplit
          (numFV, PAIR_P, interpret(term.bodies[1])))));
-    td.debug(first);
     for (i = 0; i < numFV; i++) {
       td = seqCompPrimPairJoinRight(i, numFV, PAIR_C, UNSWAP, td);
     }

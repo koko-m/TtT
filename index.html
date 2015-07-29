@@ -8,6 +8,14 @@
 <script type="text/javascript" src="peg-0.8.0.min.js"></script>
 <script type="text/javascript" src="grammar.js"></script>
 <script type="text/javascript" src="parse.js"></script>
+<script type="text/javascript">
+var areaWidth = window.innerWidth;
+var areaHeight = window.innerHeight - 220;
+
+function addLog (txt) {
+logArea.value = txt + "\n" + logArea.value;
+}
+</script>
 </head>
 
 <body>
@@ -37,16 +45,20 @@ size="100">
 </div>
 </p>
 
-<div id="canvas">
-<!--
-<canvas datasrc="main.pde" width="800" height="800"></canvas>
--->
-<!--
+<div id="area">
 <canvas datasrc="main.pde transducer.pde compCalc.pde goiInterpret.pde">
--->
-<canvas datasrc="main.pde test.pde transducer.pde compCalc.pde goiInterpret.pde">
 Sorry, please try another browser that supports Canvas :(
 </canvas>
+
+<textarea id="logArea" style="float:right; resize:none;">
+</textarea>
+
+<script type="text/javascript">
+var logArea = document.getElementById("logArea");
+logArea.style.width = (areaWidth / 5) + "px";
+logArea.style.height = areaHeight + "px";
+</script>
 </div>
+
 </body>
 </html>
