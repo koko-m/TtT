@@ -267,17 +267,18 @@ rectMode(CENTER);               // specify the center point to draw
                                 // a rectangle
 
 // types of boxes (8 bits)
-byte LABELED_RECT_ONE = 0;      // h, k_n, sum, choose
+byte LABELED_RECT_ONE = 0;      // h, k_n, sum
 byte LABELED_RECT_PAIR = 1;     // retractions except for phi & psi
 byte TRI_PAIR_JOIN = 2;         // retraction phi & psi; psi is lower
 byte TRI_PAIR_SPLIT = 3;        // retraction phi & psi; phi is lower
 byte TERM_RECT = 4;             // term box
 byte DASHED_RECT = 5;           // dashed box
+byte CHOOSE_RECT = 6;           // choose
 
 class Box {
   byte type;
   String[] labels;
-  float labelCenterX;           // valid only for LABELED_RECT_ONE
+  float labelCenterX;           // valid only for CHOOSE_RECT
   float leftX;
   float bottomY;
   float boxWidth;
@@ -316,7 +317,7 @@ class Box {
       fill(#000000);
       textAlign(CENTER, CENTER);
       textSize(TEXT_SIZE_LABEL);
-      text(this.labels[0], labelCenterX, centerY);
+      text(this.labels[0], centerX, centerY);
       break;
     case LABELED_RECT_PAIR:
       stroke(#000000);
@@ -408,6 +409,18 @@ class Box {
         on = !on;
       }
       endShape();
+      break;
+    case CHOOSE_RECT:
+      stroke(#000000);
+      strokeWeight(2);
+      // fill(#ffffff);
+      noFill();
+      rect(centerX, centerY, this.boxWidth, this.boxHeight);
+      strokeWeight(1);          // restore default value
+      fill(#000000);
+      textAlign(CENTER, CENTER);
+      textSize(TEXT_SIZE_PROB);
+      text(this.labels[0], this.labelCenterX, centerY);
       break;
     }
   }

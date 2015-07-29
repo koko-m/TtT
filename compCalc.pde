@@ -1050,14 +1050,14 @@ Transducer addChoiceBox (float prob,
   }
   int numIOPorts = leftTd.inPortIds.length;
   String label = "choose(" + prob + ")";
-  textSize(TEXT_SIZE_LABEL);
+  textSize(TEXT_SIZE_PROB);
   float interval = textWidth(label) + TEXT_MARGIN * 2;
   float labelCenterX = UNIT_LENGTH + leftTd.tdWidth + interval / 2;
   leftTd = parCompTd(interval, leftTd, rightTd);
   leftTd.shiftX(UNIT_LENGTH);
   leftTd.tdWidth += UNIT_LENGTH * 2;
   leftTd.tdHalfHeight += UNIT_LENGTH;
-  leftTd.addBoxHead(new Box(LABELED_RECT_ONE, {label}, labelCenterX,
+  leftTd.addBoxHead(new Box(CHOOSE_RECT, {label}, labelCenterX,
                             0, leftTd.tdHalfHeight,
                             leftTd.tdWidth, leftTd.tdHalfHeight * 2));
   Port[] newInPortIds = new Port[0];
