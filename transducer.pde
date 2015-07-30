@@ -9,6 +9,7 @@ class Transducer {
   float tdHalfHeight;
   int[] inPortIds;
   int[] outPortIds;
+  Token token;
 
   Transducer (float tdWidth, float tdHalfHeight) {
     this.ports = new Port[0];
@@ -17,6 +18,7 @@ class Transducer {
     this.tdHalfHeight = tdHalfHeight;
     this.inPortIds = new int[0];
     this.outPortIds = new int[0];
+    this.token = null;
   }
 
   int addPort (Port newPort) {
@@ -105,6 +107,51 @@ class Transducer {
     }
   }
 
+  void setComputeInfo (byte computeType, float value, Memory memory) {
+    for (int i = 0; i < this.inPortIds.length; i++) {
+      this.getPort(this.inPortIds[i]).setComputeInfo(computeType,
+                                                     value, i,
+                                                     memory);
+    }
+  }
+  
+  void setComputeInfo (byte computeType, float value) {
+    for (int i = 0; i < this.inPortIds.length; i++) {
+      this.getPort(this.inPortIds[i]).setComputeInfo(computeType,
+                                                     value, i);
+    }
+  }
+
+  void setComputeInfo (byte computeType) {
+    for (int i = 0; i < this.inPortIds.length; i++) {
+      this.getPort(this.inPortIds[i]).setComputeInfo(computeType, i);
+    }
+  }
+
+  void initToken (Nat data) {
+    this.token = new Token(data,
+                           this.inPortIds[this.inPortIds.length - 1]);
+  }
+  
+  void run () {
+    this.initToken(encodeNatQuery());
+    addLog("run");
+    while (this.token.portId
+           != this.outPortIds[this.outPortIds.length - 1]) {
+      Port p = this.getPort(this.token.portId);
+      this.token.portId =
+        p.nextPortIds[this.token.getNextPortIndex(p.computeType,
+                                                  p.value,
+                                                  p.portIndex,
+                                                  p.memory)];
+    }
+    addLog(this.token.copyIndex.prettyPrint() + ", "
+           + this.token.data.prettyPrint() + " at "
+           + this.token.portId);
+    addLog("Result: " + decodeNatAnswer(this.token.data).prettyPrint()
+           + " in copy " + this.token.copyIndex.prettyPrint());
+  }
+  
   void drawAll () {
     this.draw();
     this.drawPorts();
@@ -173,6 +220,9 @@ class Transducer {
       else textAlign(RIGHT, BOTTOM);
       textSize(TEXT_SIZE_DEBUG);
       text(i, p.x, p.y);
+
+      // console.log(i + " " + printComputeType(p.computeType) + " "
+      //             + p.portIndex + " " + p.memory);
     }
   }
 
@@ -196,6 +246,13 @@ class Port {
   boolean visible;
   String name;
 
+  // for computation: see token.pde
+  byte computeType;
+  float value;                  // valid only for COMPUTE_K and
+                                // COMPUTE_CHOOSE
+  int portIndex;
+  Memory memory;
+  
   Port (float x, float y, boolean visible, String name) {
     this.x = x;
     this.y = y;
@@ -203,6 +260,8 @@ class Port {
     this.paths = new float[0];
     this.visible = visible;
     this.name = name;
+    this.computeType = COMPUTE_NOP;
+    this.memory = null;
   }
 
   Port (float x, float y, boolean visible) {
@@ -217,6 +276,25 @@ class Port {
     this(x, y, VISIBLE, null);
   }
 
+  void setComputeInfo (byte computeType, float value, int portIndex,
+                       Memory memory) {
+    this.computeType = computeType;
+    this.value = value;
+    this.portIndex = portIndex;
+    this.memory = memory;
+  }
+  
+  void setComputeInfo (byte computeType, float value, int portIndex) {
+    this.computeType = computeType;
+    this.value = value;
+    this.portIndex = portIndex;
+  }
+  
+  void setComputeInfo (byte computeType, int portIndex) {
+    this.computeType = computeType;
+    this.portIndex = portIndex;
+  }
+  
   void addNextPortIds (int[] portIds, float[][] paths) {
     if (portIds.length != paths.length) {
       console.log("error addNextPortIds: portIds.length "
@@ -246,7 +324,7 @@ class Port {
   void hide () {
     this.visible = HIDDEN;
   }
-  
+
   void drawName () {
     if (this.name != null) {
       fill(#ffffff);

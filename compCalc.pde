@@ -17,6 +17,7 @@ Transducer primH (float portInterval) {
   td.connectPorts(inLeft, {outRight, outLeft});
   td.setInPortIds({inRight, inLeft});
   td.setOutPortIds({outRight, outLeft});
+  td.setComputeInfo(COMPUTE_H);
   return td;
 }
 
@@ -32,6 +33,7 @@ Transducer primK (String value) {
   td.connectPorts(inn, {out});
   td.setInPortIds({inn});
   td.setOutPortIds({out});
+  td.setComputeInfo(COMPUTE_K, float(value));
   return td;
 }
 
@@ -58,6 +60,7 @@ Transducer primSum (float portInterval) {
   td.connectPorts(inLeft, {outRight});
   td.setInPortIds({inRight, inCenter, inLeft});
   td.setOutPortIds({outRight, outCenter, outLeft});
+  td.setComputeInfo(COMPUTE_SUM);
   return td;
 }
 
@@ -125,6 +128,8 @@ Transducer seqCompPrimPairE (int portIndex, Transducer td) {
   int inUpper = td.addPort(new Port(boxCenterX,
                                     -boxBottomY + boxHeight, HIDDEN));
   int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+  td.getPort(inLower).setComputeInfo(COMPUTE_E_PRIME, 0);
+  td.getPort(inUpper).setComputeInfo(COMPUTE_E, 0);
   td.connectPorts(inLower, {outLower});
   td.connectPorts(outLower, {inTd});
   td.connectPorts(outTd, {inUpper});
@@ -231,6 +236,18 @@ Transducer seqCompPrimPairJoinCenter (int portRightIndex,
                                         -boxBottomY + boxHeight,
                                         HIDDEN));
   int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+  switch (pair) {
+  case PAIR_P:
+    td.getPort(inLower).setComputeInfo(COMPUTE_PSI, 0);
+    td.getPort(inUpperRight).setComputeInfo(COMPUTE_PHI, 0);
+    td.getPort(inUpperLeft).setComputeInfo(COMPUTE_PHI, 1);
+    break;
+  case PAIR_C:
+    td.getPort(inLower).setComputeInfo(COMPUTE_C_PRIME, 0);
+    td.getPort(inUpperRight).setComputeInfo(COMPUTE_C, 0);
+    td.getPort(inUpperLeft).setComputeInfo(COMPUTE_C, 1);
+    break;
+  }
   td.connectPorts(inLower, {outLowerRight, outLowerLeft});
   if (swap) {
     td.connectPorts(outLowerRight, {inTdLeft},
@@ -362,6 +379,18 @@ Transducer seqCompPrimPairJoinRight (int portRightIndex,
                                           -boxBottomY + boxHeight,
                                           HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    switch (pair) {
+    case PAIR_P:
+      td.getPort(inLower).setComputeInfo(COMPUTE_PSI, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_PHI, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_PHI, 1);
+      break;
+    case PAIR_C:
+      td.getPort(inLower).setComputeInfo(COMPUTE_C_PRIME, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_C, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_C, 1);
+      break;
+    }
     td.connectPorts(inLower, {outLowerRight, outLowerLeft});
     td.connectPorts(outLowerRight, {inTdLeft},
                     {{boxCenterX + boxHalfWidth / 2,
@@ -464,6 +493,18 @@ Transducer seqCompPrimPairJoinRight (int portRightIndex,
                                           -boxBottomY + boxHeight,
                                           HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    switch (pair) {
+    case PAIR_P:
+      td.getPort(inLower).setComputeInfo(COMPUTE_PSI, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_PHI, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_PHI, 1);
+      break;
+    case PAIR_C:
+      td.getPort(inLower).setComputeInfo(COMPUTE_C_PRIME, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_C, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_C, 1);
+      break;
+    }
     td.connectPorts(inLower, {outLowerRight, outLowerLeft});
     td.connectPorts(outLowerRight, {inTdRight});
     td.connectPorts(outLowerLeft, {inTdLeft},
@@ -581,6 +622,18 @@ Transducer seqCompPrimPairJoinLeft (int portRightIndex,
                                           -boxBottomY + boxHeight,
                                           HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    switch (pair) {
+    case PAIR_P:
+      td.getPort(inLower).setComputeInfo(COMPUTE_PSI, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_PHI, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_PHI, 1);
+      break;
+    case PAIR_C:
+      td.getPort(inLower).setComputeInfo(COMPUTE_C_PRIME, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_C, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_C, 1);
+      break;
+    }
     td.connectPorts(inLower, {outLowerRight, outLowerLeft});
     td.connectPorts(outLowerRight, {inTdLeft});
     td.connectPorts(outLowerLeft, {inTdRight},
@@ -683,6 +736,18 @@ Transducer seqCompPrimPairJoinLeft (int portRightIndex,
                                           -boxBottomY + boxHeight,
                                           HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    switch (pair) {
+    case PAIR_P:
+      td.getPort(inLower).setComputeInfo(COMPUTE_PSI, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_PHI, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_PHI, 1);
+      break;
+    case PAIR_C:
+      td.getPort(inLower).setComputeInfo(COMPUTE_C_PRIME, 0);
+      td.getPort(inUpperRight).setComputeInfo(COMPUTE_C, 0);
+      td.getPort(inUpperLeft).setComputeInfo(COMPUTE_C, 1);
+      break;
+    }
     td.connectPorts(inLower, {outLowerRight, outLowerLeft});
     td.connectPorts(outLowerRight, {inTdRight},
                     {{boxCenterX + boxHalfWidth / 2,
@@ -785,6 +850,18 @@ Transducer seqCompPrimPairSplit (int portIndex, boolean pair,
   int outUpperLeft = td.addPort(new Port(boxCenterX
                                          - boxHalfWidth / 2,
                                          -boxBottomY));
+  switch (pair) {
+  case PAIR_P:
+    td.getPort(inLowerRight).setComputeInfo(COMPUTE_PHI, 0);
+    td.getPort(inLowerLeft).setComputeInfo(COMPUTE_PHI, 1);
+    td.getPort(inUpper).setComputeInfo(COMPUTE_PSI, 0);
+    break;
+  case PAIR_C:
+    td.getPort(inLowerRight).setComputeInfo(COMPUTE_C, 0);
+    td.getPort(inLowerLeft).setComputeInfo(COMPUTE_C, 1);
+    td.getPort(inUpper).setComputeInfo(COMPUTE_C_PRIME, 0);
+    break;
+  }
   td.connectPorts(inLowerRight, {outLower});
   td.connectPorts(inLowerLeft, {outLower});
   td.connectPorts(outLower, {inTd});
@@ -844,6 +921,8 @@ Transducer parCompPrimPairW (int portIndex, Transducer td) {
                                       -boxBottomY + boxHeight,
                                       HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    td.getPort(inLower).setComputeInfo(COMPUTE_W_PRIME, 0);
+    td.getPort(inUpper).setComputeInfo(COMPUTE_W, 0);
     td.connectPorts(inLower, {outLower});
     td.connectPorts(inUpper, {outUpper});
     td.insertInPortId(inLower, portIndex);
@@ -875,6 +954,8 @@ Transducer parCompPrimPairW (int portIndex, Transducer td) {
                                       -boxBottomY + boxHeight,
                                       HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    td.getPort(inLower).setComputeInfo(COMPUTE_W_PRIME, 0);
+    td.getPort(inUpper).setComputeInfo(COMPUTE_W, 0);
     td.connectPorts(inLower, {outLower});
     td.connectPorts(inUpper, {outUpper});
     td.insertInPortId(inLower, portIndex);
@@ -1093,6 +1174,8 @@ Transducer addChoiceBox (float prob,
   }
   leftTd.inPortIds = newInPortIds;
   leftTd.outPortIds = newOutPortIds;
+  Memory memory = new Memory();
+  leftTd.setComputeInfo(COMPUTE_CHOOSE, prob, memory);
   return leftTd;
 }
 
@@ -1135,6 +1218,13 @@ Transducer addBangBox (Transducer td) {
                                       -boxBottomY + boxHeight,
                                       HIDDEN));
     int outUpper = td.addPort(new Port(boxCenterX, -boxBottomY));
+    if (i < td.inPortIds.length - 1) {
+      td.getPort(inLower).setComputeInfo(COMPUTE_D_PRIME, 0);
+      td.getPort(inUpper).setComputeInfo(COMPUTE_D, 0);
+    } else {
+      td.getPort(inLower).setComputeInfo(COMPUTE_V, 0);
+      td.getPort(inUpper).setComputeInfo(COMPUTE_U, 0);
+    }
     td.connectPorts(inLower, {outLower});
     td.connectPorts(outLower, {inTd});
     td.connectPorts(outTd, {inUpper});
@@ -1186,5 +1276,6 @@ Transducer addTermBox (String term, String[] portNames,
     td.replaceInPortId(i, inn);
     td.replaceOutPortId(i, out);
   }
+  td.setComputeInfo(COMPUTE_TERM);
   return td;
 }

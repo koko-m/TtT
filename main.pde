@@ -2,6 +2,7 @@ void setup () {
   size(areaWidth * 3 / 4, areaHeight);
   background(#b3adaa);
   frameRate(20);
+  clearLog();
   goDrawing = false;
 }
 
@@ -13,6 +14,7 @@ float OriginRelativeX;
 float OriginRelativeY;
 float ZoomX;
 float ZoomY;
+boolean goRunning;
 
 void draw () {
   // testDraw();
@@ -27,6 +29,8 @@ void draw () {
     ZoomX = 0;
     ZoomY = 0;
     goDrawing = true;
+    clearLog();
+    goRunning = true;
   } else if (goDrawing) {
     background(#b3adaa);
 
@@ -41,6 +45,8 @@ void draw () {
     // Td.draw();                  // not draw port ids
     popMatrix();
     // goDrawing = false;
+    if (goRunning) Td.run();
+    goRunning = false;
   }
 }
 
