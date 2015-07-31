@@ -1,22 +1,22 @@
 var parser = PEG.buildParser(grammar);
 
-var term = undefined;
-var termReady = false;
+var td = undefined;
 
-function isTermReady () { return termReady; }
-function termProcessed () { termReady = false; }
+function getTd () { return td; }
 
-function getTerm () { return term; }
-function setTerm () {
+function translateTerm () {
     try {
 	var errMsg = document.getElementById("errMsg");
 	errMsg.textContent = null;
-	term =
-	    collectFreeVars(
-		eliminateTermSum(
-		    parser.parse(
-			document.getElementById("term").value)));
-	termReady = true;
+	var processingInstance = Processing.getInstanceById("canvas");
+	var newTd =
+	    processingInstance.interpret(
+		collectFreeVars(
+		    eliminateTermSum(
+			parser.parse(
+			    document.getElementById("term").value))));
+	td = newTd;
+	goReady();
     } catch (err) {
 	switch (err.name) {
 	case "SyntaxError":
@@ -27,6 +27,10 @@ function setTerm () {
 	case "Error":
 	    errMsg.textContent = err.name + ": " + err.message;
 	    break;
+	}
+	switch (getState()) {
+	case STATE_IDLE: case STATE_READY: goIdle(); break;
+	case STATE_RUN: case STATE_PAUSE: goPause(); break;
 	}
     }
 }

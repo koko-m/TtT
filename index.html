@@ -6,20 +6,11 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <script type="text/javascript" src="processing.js"></script>
 <script type="text/javascript" src="peg-0.8.0.min.js"></script>
+<script type="text/javascript" src="control.js"></script>
 <script type="text/javascript" src="grammar.js"></script>
 <script type="text/javascript" src="parse.js"></script>
-<script type="text/javascript">
-var areaWidth = window.innerWidth;
-var areaHeight = window.innerHeight - 220;
-
-function clearLog () {
-logArea.value = "";
-}
-
-function addLog (txt) {
-logArea.value = txt + "\n" + logArea.value;
-}
-</script>
+<script type="text/javascript" src="fixSize.js"></script>
+<script type="text/javascript" src="logArea.js"></script>
 </head>
 
 <body>
@@ -45,12 +36,12 @@ size="100">
 <font color="red" id="errMsg"></font>
 </div>
 <div id="buttons">
-<input type="button" value="simulate" onclick="setTerm();">
+<input type="button" value="translate" onclick="translateTerm();">
 </div>
 </p>
 
 <div id="area">
-<canvas datasrc="main.pde transducer.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
+<canvas id="canvas" datasrc="main.pde transducer.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
 Sorry, please try another browser that supports Canvas :(
 </canvas>
 
@@ -58,9 +49,7 @@ Sorry, please try another browser that supports Canvas :(
 </textarea>
 
 <script type="text/javascript">
-var logArea = document.getElementById("logArea");
-logArea.style.width = (areaWidth / 5) + "px";
-logArea.style.height = areaHeight + "px";
+setLogAreaSize();
 </script>
 </div>
 

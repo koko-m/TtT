@@ -1,9 +1,8 @@
 void setup () {
-  size(areaWidth * 3 / 4, areaHeight);
+  size(getCanvasWidth(), getCanvasHeight());
   background(#b3adaa);
   frameRate(20);
   clearLog();
-  goDrawing = false;
 }
 
 // global variables
@@ -14,24 +13,23 @@ float OriginRelativeX;
 float OriginRelativeY;
 float ZoomX;
 float ZoomY;
-boolean goRunning;
 
 void draw () {
-  // testDraw();
-  if (isTermReady()) {
-    background(#b3adaa);
-    Td = interpret(getTerm());
-    termProcessed();
+  switch (getState()) {
+  case STATE_IDLE: case STATE_PAUSE: break;
+  case STATE_READY:
+    Td = getTd();
     Td.debug(true);
+    Td.initToken(encodeNatQuery());
     ScaleValue = 1;
     OriginRelativeX = 0;
     OriginRelativeY = 0;
     ZoomX = 0;
     ZoomY = 0;
-    goDrawing = true;
     clearLog();
-    goRunning = true;
-  } else if (goDrawing) {
+    goRun();
+    break;
+  case STATE_RUN:
     background(#b3adaa);
 
     pushMatrix();
@@ -43,10 +41,9 @@ void draw () {
     scale(min(width / Td.tdWidth, height / (Td.tdHalfHeight / 2)));
     Td.drawAll();               // draw port ids as well
     // Td.draw();                  // not draw port ids
+    Td.run();
     popMatrix();
-    // goDrawing = false;
-    if (goRunning) Td.run();
-    goRunning = false;
+    break;
   }
 }
 
@@ -107,16 +104,11 @@ void mouseReleased () {
   }
 }
 
-boolean run = true;
-
 void mouseClicked () {
-  run = !run;
-  if (run) {
-    addLog("resume");
-    loop();
-  } else {
-    addLog("pause");
-    noLoop();
+  switch (State) {
+  case STATE_IDLE: case STATE_READY: break;
+  case STATE_RUN: goPause(); break;
+  case STATE_PAUSE: goResume(); break;
   }
 }
 

@@ -134,22 +134,27 @@ class Transducer {
   }
   
   void run () {
-    this.initToken(encodeNatQuery());
-    addLog("run");
-    while (this.token.portId
-           != this.outPortIds[this.outPortIds.length - 1]) {
-      Port p = this.getPort(this.token.portId);
-      this.token.portId =
-        p.nextPortIds[this.token.getNextPortIndex(p.computeType,
-                                                  p.value,
-                                                  p.portIndex,
-                                                  p.memory)];
-    }
+    Port p = this.getPort(this.token.portId);
     addLog(this.token.copyIndex.prettyPrint() + ", "
            + this.token.data.prettyPrint() + " at "
-           + this.token.portId);
-    addLog("Result: " + decodeNatAnswer(this.token.data).prettyPrint()
-           + " in copy " + this.token.copyIndex.prettyPrint());
+           + this.token.portId + "("
+           + printComputeType(p.computeType) + ":" + p.portIndex
+           + ")");
+    fill(#ff0000);
+    stroke(#ff0000);
+    ellipse(p.x, p.y, UNIT_LENGTH, UNIT_LENGTH);
+    this.token.portId =
+      p.nextPortIds[this.token.getNextPortIndex(p.computeType,
+                                                p.value,
+                                                p.portIndex,
+                                                p.memory)];
+    if (this.token.portId
+        == this.outPortIds[this.outPortIds.length - 1]) {
+      addLog("Result: "
+             + decodeNatAnswer(this.token.data).prettyPrint()
+             + " in copy " + this.token.copyIndex.prettyPrint());
+      goIdle();
+    }
   }
   
   void drawAll () {

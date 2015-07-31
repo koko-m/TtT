@@ -54,10 +54,10 @@ class Token {
 
   int getNextPortIndex (byte computeType, float value, int portIndex,
                         Memory memory) {
-    addLog(this.copyIndex.prettyPrint() + ", "
-           + this.data.prettyPrint() + " at "
-           + this.portId + "("
-           + printComputeType(computeType) + ":" + portIndex + ")");
+    // addLog(this.copyIndex.prettyPrint() + ", "
+    //        + this.data.prettyPrint() + " at "
+    //        + this.portId + "("
+    //        + printComputeType(computeType) + ":" + portIndex + ")");
     String errMsgIndex =
       "error getNextPortIndex: invalid portIndex "
       + portIndex + " for "
