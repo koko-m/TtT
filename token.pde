@@ -45,11 +45,15 @@ class Token {
   Nat copyIndex;
   Nat data;
   int portId;
+  float x;
+  float y;
 
-  Token (Nat data, int portId) {
+  Token (Nat data, int portId, float x, float y) {
     this.copyIndex = new Nat(); // dummy value
     this.data = data;
     this.portId = portId;
+    this.x = x;
+    this.y = y;
   }
 
   int getNextPortIndex (byte computeType, float value, int portIndex,
@@ -326,5 +330,19 @@ class Token {
     case COMPUTE_TERM: case COMPUTE_NOP:
       return 0;
     }
+  }
+
+  void draw () {
+    stroke(#ff0000);
+    fill(#ff0000);
+    ellipseMode(CENTER);
+    ellipse(this.x, this.y, TOKEN_DIAMETER, TOKEN_DIAMETER);
+    textSize(TEXT_SIZE_TOKEN);
+    textAlign(RIGHT, CENTER);
+    text("{" + this.copyIndex.prettyPrint() + "}",
+         this.x - TOKEN_DIAMETER / 2 - TEXT_MARGIN, this.y);
+    textAlign(LEFT, CENTER);
+    text(this.data.prettyPrint(),
+         this.x + TOKEN_DIAMETER / 2 + TEXT_MARGIN, this.y);
   }
 }

@@ -1,3 +1,7 @@
+// boolean constants that indicate whether execution is completed
+boolean COMPLETED = true;
+boolean UNCOMPLETED = false;
+
 class Transducer {
   // the bottom left corner of the bounding rectangle has coordinate
   // (0, tdHalfHeight)
@@ -129,31 +133,33 @@ class Transducer {
   }
 
   void initToken (Nat data) {
-    this.token = new Token(data,
-                           this.inPortIds[this.inPortIds.length - 1]);
+    int inPortId = this.inPortIds[this.inPortIds.length - 1];
+    Port inPort = this.getPort(inPortId);
+    this.token = new Token(data, inPortId, inPort.x, inPort.y);
   }
   
-  void run () {
+  boolean run () {
     Port p = this.getPort(this.token.portId);
     addLog(this.token.copyIndex.prettyPrint() + ", "
            + this.token.data.prettyPrint() + " at "
            + this.token.portId + "("
            + printComputeType(p.computeType) + ":" + p.portIndex
            + ")");
-    fill(#ff0000);
-    stroke(#ff0000);
-    ellipse(p.x, p.y, UNIT_LENGTH, UNIT_LENGTH);
-    this.token.portId =
-      p.nextPortIds[this.token.getNextPortIndex(p.computeType,
-                                                p.value,
-                                                p.portIndex,
-                                                p.memory)];
     if (this.token.portId
         == this.outPortIds[this.outPortIds.length - 1]) {
       addLog("Result: "
              + decodeNatAnswer(this.token.data).prettyPrint()
              + " in copy " + this.token.copyIndex.prettyPrint());
-      goIdle();
+      return COMPLETED;
+    } else {
+      this.token.portId =
+        p.nextPortIds[this.token.getNextPortIndex(p.computeType,
+                                                  p.value,
+                                                  p.portIndex,
+                                                  p.memory)];
+      this.token.x = this.getPort(this.token.portId).x;
+      this.token.y = this.getPort(this.token.portId).y;
+      return UNCOMPLETED;
     }
   }
   
@@ -206,6 +212,7 @@ class Transducer {
         }
       }
       this.ports[i].drawName();
+      this.token.draw();
     }
   }
   
