@@ -150,13 +150,18 @@ class Transducer {
   }
   
   boolean run () {
-    boolean terminate =
-      this.getPort(this.token.portId).setNextPort(this.token);
-    if (terminate) {
-      addLog("Result: "
-             + decodeNatAnswer(this.token.data).prettyPrint()
-             + " in copy " + this.token.copyIndex.prettyPrint());
+    this.token.step();
+    while (this.token.distance < 0) {
+      boolean terminate =
+        this.getPort(this.token.portId).setNextPort(this.token);
+      if (terminate) {
+        addLog("Result: "
+               + decodeNatAnswer(this.token.data).prettyPrint()
+               + " in copy " + this.token.copyIndex.prettyPrint());
+        break;
+      }
     }
+    if (!terminate) this.token.put();
     return terminate;
   }
   

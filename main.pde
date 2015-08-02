@@ -23,6 +23,7 @@ void draw () {
     break;
   case STATE_READY:
     Td = getTd();
+    Td.collectPaths();
     Td.debug(true);
     Td.initToken(encodeNatQuery());
     ScaleValue = 1;
@@ -152,3 +153,5 @@ float SWAP_LOOP_X_INTERVAL = UNIT_LENGTH * 2;
 float PRIM_INTERVAL = UNIT_LENGTH * 4;
 
 float TOKEN_DIAMETER = UNIT_LENGTH;
+
+float TOKEN_SPEED = UNIT_LENGTH;
