@@ -168,35 +168,10 @@ class Transducer {
   void draw () {
     for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
     for (int i = 0; i < ports.length; i++) {
-      Port p = this.ports[i];
-      if (p.visible) {
-        if (p.nextPortIds.length != p.paths.length) {
-          console.log("error draw (port id: " + i
-                      + "): nextPortIds.length "
-                      + nextPortIds.length
-                      + " is not equal to paths.length "
-                      + paths.length);
-          break;
-        }
-        for (int j = 0; j < p.nextPortIds.length; j++) {
-          float[] path = p.paths[j];
-          if (path.length % 2 != 0) {
-            console.log("error draw (port id: " + i
-                        + " , next port id: " + j
-                        + "): path.length " + path.length
-                        + " is not even");
-            break;
-          }
-          for (int k = 1; k < path.length / 2; k++) {
-            stroke(#000000);
-            line(path[(k - 1) * 2], path[(k - 1) * 2 + 1],
-                 path[k * 2], path[k * 2 + 1]);
-          }
-        }
-      }
       this.ports[i].drawName();
-      this.token.draw();
+      this.ports[i].drawPaths();
     }
+    this.token.draw();
   }
   
   void drawPorts () {
@@ -215,9 +190,6 @@ class Transducer {
       else textAlign(RIGHT, BOTTOM);
       textSize(TEXT_SIZE_DEBUG);
       text(i, p.x, p.y);
-
-      // console.log(i + " " + printComputeType(p.computeType) + " "
-      //             + p.portIndex + " " + p.memory);
     }
   }
 

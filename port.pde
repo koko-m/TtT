@@ -109,6 +109,19 @@ class Port {
     }
   }
 
+  void drawPaths () {
+    if (this.visible) {
+      for (int i = 0; i < this.paths.length; i++) {
+        float[] path = this.paths[i];
+        for (int j = 1; j < path.length / 2; j++) {
+          stroke(#000000);
+          line(path[(j - 1) * 2], path[(j - 1) * 2 + 1],
+               path[j * 2], path[j * 2 + 1]);
+        }
+      }
+    }
+  }
+
   boolean setNextPort (Token token) {
     addLog(token.copyIndex.prettyPrint() + ", "
            + token.data.prettyPrint() + " at "
