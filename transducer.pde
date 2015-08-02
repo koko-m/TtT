@@ -137,6 +137,18 @@ class Transducer {
     Port inPort = this.getPort(inPortId);
     this.token = new Token(data, inPortId, inPort.x, inPort.y);
   }
+
+  void collectPaths () {
+    // set each p.paths to be {p.x,p.y,x1,y1,...,nextP.x,nextP.y}
+    for (int i = 0; i < this.ports.length; i++) {
+      Port p = this.ports[i];
+      for (int j = 0; j < p.nextPortIds.length; j++) {
+        Port nextP = this.ports[p.nextPortIds[j]];
+        p.paths[j] = concat({p.x, p.y},
+                            concat(p.paths[j], {nextP.x, nextP.y}));
+      }
+    }
+  }
   
   boolean run () {
     Port p = this.getPort(this.token.portId);
@@ -254,7 +266,8 @@ class Port {
   float x;
   float y;
   int[] nextPortIds;
-  float[][] paths;
+  float[][] paths;              // to be completed
+                                // by Transducer.collectPaths()
   boolean visible;
   String name;
 
@@ -325,9 +338,9 @@ class Port {
 
   void shiftX (float shiftX) {
     this.x += shiftX;
-    for (i = 0; i < this.paths.length; i++) {
+    for (int i = 0; i < this.paths.length; i++) {
       float[] path = this.paths[i];
-      for (j = 0; j < path.length / 2; j++) {
+      for (int j = 0; j < path.length / 2; j++) {
         path[j * 2] += shiftX;
       }
     }

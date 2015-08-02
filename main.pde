@@ -24,6 +24,7 @@ void draw () {
   case STATE_READY:
     Td = getTd();
     Td.debug(true);
+    Td.collectPaths();
     Td.initToken(encodeNatQuery());
     ScaleValue = 1;
     OriginRelativeX = 0;
