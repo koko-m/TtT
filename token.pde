@@ -1,16 +1,59 @@
+// 8 bits constants to specify computation type
+byte COMPUTE_U = 0;
+byte COMPUTE_V = 1;
+byte COMPUTE_PHI = 2;
+byte COMPUTE_PSI = 3;
+byte COMPUTE_E = 4;
+byte COMPUTE_E_PRIME = 5;
+byte COMPUTE_D = 6;
+byte COMPUTE_D_PRIME = 7;
+byte COMPUTE_C = 8;
+byte COMPUTE_C_PRIME = 9;
+byte COMPUTE_W = 10;
+byte COMPUTE_W_PRIME = 11;
+byte COMPUTE_H = 12;
+byte COMPUTE_K = 13;
+byte COMPUTE_SUM = 14;
+byte COMPUTE_TERM = 15;
+byte COMPUTE_CHOOSE = 16;
+byte COMPUTE_NOP = 17;
+
+String printComputeType (byte computeType) {
+  switch (computeType) {
+  case COMPUTE_U: return "U";
+  case COMPUTE_V: return "V";
+  case COMPUTE_PHI: return "PHI";
+  case COMPUTE_PSI: return "PSI";
+  case COMPUTE_E: return "E";
+  case COMPUTE_E_PRIME: return "E'";
+  case COMPUTE_D: return "D";
+  case COMPUTE_D_PRIME: return "D'";
+  case COMPUTE_C: return "C";
+  case COMPUTE_C_PRIME: return "C'";
+  case COMPUTE_W: return "W";
+  case COMPUTE_W_PRIME: return "W'";
+  case COMPUTE_H: return "H";
+  case COMPUTE_K: return "K";
+  case COMPUTE_SUM: return "SUM";
+  case COMPUTE_TERM: return "TERM";
+  case COMPUTE_CHOOSE: return "CHOOSE";
+  case COMPUTE_NOP: return "NOP";
+  }
+}
+
 class Token {
   Nat copyIndex;
   Nat data;
-  float[] path;
-  float distance;
-  int nextPortId;
+  int portId;
+  float x;
+  float y;
 
-  Token (Nat data, float[] path, float distance, int nextPortId) {
+  Token (Nat data, int portId, float x, float y) {
     this.copyIndex = new Nat(); // dummy value
     this.data = data;
-    this.path = path;
-    this.distance = distance;
-    this.nextPortId = nextPortId;
+    this.portId = portId;
+    this.x = x;
+    this.y = y;
   }
 
   int getNextPortIndex (byte computeType, float value, int portIndex,
@@ -289,7 +332,6 @@ class Token {
     }
   }
 
-  // need to be revised
   void draw () {
     stroke(#ff0000);
     fill(#ff0000);
@@ -302,69 +344,5 @@ class Token {
     textAlign(LEFT, CENTER);
     text(this.data.prettyPrint(),
          this.x + TOKEN_DIAMETER / 2 + TEXT_MARGIN, this.y);
-  }
-}
-
-// path functions
-
-float pathLength (float[] path) {
-  float l = 0;
-  for (int i = 1; i < path.length / 2; i++) {
-    l += dist(path[(i - 1) * 2], path[(i - 1) * 2 + 1],
-              path[i * 2], path[i * 2 + 1]);
-  }
-  return l;
-}
-
-float[] positionOnPath (float[] path, float distance) {
-  int numPoints = path.length / 2;
-  if (distance > 0) {
-    float lastLineLength =
-      
-  } else {
-    return {path[(numPoints - 1) * 2], path[(numPoints - 1) * 2 + 1]};
-  }
-}
-
-// 8 bits constants to specify computation type
-byte COMPUTE_U = 0;
-byte COMPUTE_V = 1;
-byte COMPUTE_PHI = 2;
-byte COMPUTE_PSI = 3;
-byte COMPUTE_E = 4;
-byte COMPUTE_E_PRIME = 5;
-byte COMPUTE_D = 6;
-byte COMPUTE_D_PRIME = 7;
-byte COMPUTE_C = 8;
-byte COMPUTE_C_PRIME = 9;
-byte COMPUTE_W = 10;
-byte COMPUTE_W_PRIME = 11;
-byte COMPUTE_H = 12;
-byte COMPUTE_K = 13;
-byte COMPUTE_SUM = 14;
-byte COMPUTE_TERM = 15;
-byte COMPUTE_CHOOSE = 16;
-byte COMPUTE_NOP = 17;
-
-String printComputeType (byte computeType) {
-  switch (computeType) {
-  case COMPUTE_U: return "U";
-  case COMPUTE_V: return "V";
-  case COMPUTE_PHI: return "PHI";
-  case COMPUTE_PSI: return "PSI";
-  case COMPUTE_E: return "E";
-  case COMPUTE_E_PRIME: return "E'";
-  case COMPUTE_D: return "D";
-  case COMPUTE_D_PRIME: return "D'";
-  case COMPUTE_C: return "C";
-  case COMPUTE_C_PRIME: return "C'";
-  case COMPUTE_W: return "W";
-  case COMPUTE_W_PRIME: return "W'";
-  case COMPUTE_H: return "H";
-  case COMPUTE_K: return "K";
-  case COMPUTE_SUM: return "SUM";
-  case COMPUTE_TERM: return "TERM";
-  case COMPUTE_CHOOSE: return "CHOOSE";
-  case COMPUTE_NOP: return "NOP";
   }
 }

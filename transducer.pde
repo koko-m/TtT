@@ -132,24 +132,12 @@ class Transducer {
     }
   }
 
-  void collectPaths () {
-    for (int i = 0; i < this.ports.length; i++) {
-      Port p = this.ports[i];
-      for (int j = 0; j < p.nextPortIds.length; i++) {
-        Port nextP = this.ports[p.nextPortIds[j]];
-        p.paths[j] = concat({p.x, p.y},
-                            append(p.paths[j], {nextP.x, nextP.y}));
-      }
-    }
-  }
-  
   void initToken (Nat data) {
     int inPortId = this.inPortIds[this.inPortIds.length - 1];
     Port inPort = this.getPort(inPortId);
-    this.token = new Token(data, null, 0, inPortId);
+    this.token = new Token(data, inPortId, inPort.x, inPort.y);
   }
-
-  // need to be revised
+  
   boolean run () {
     Port p = this.getPort(this.token.portId);
     addLog(this.token.copyIndex.prettyPrint() + ", "
