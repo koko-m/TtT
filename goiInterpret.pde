@@ -220,7 +220,6 @@ Transducer interpret (Object term) {
   if (td != null) {
     td = addTermBox(term.prettyPrint(), term.freeVars, td);
   }
+  td.collectPaths();
   return td;
 }
-
-

@@ -202,24 +202,10 @@ class Transducer {
                         + " is not even");
             break;
           }
-          if (path.length > 0) {
-            float x = p.x;
-            float y = p.y;
-            for (int k = 0; k < path.length / 2; k++) {
-              stroke(#000000);
-              line(x, y, path[k * 2], path[k * 2 + 1]);
-              x = path[k * 2];
-              y = path[k * 2 + 1];
-            }
+          for (int k = 1; k < path.length / 2; k++) {
             stroke(#000000);
-            line(x, y,
-                 this.ports[p.nextPortIds[j]].x,
-                 this.ports[p.nextPortIds[j]].y);
-          } else {
-            stroke(#000000);
-            line(p.x, p.y,
-                 this.ports[p.nextPortIds[j]].x,
-                 this.ports[p.nextPortIds[j]].y);
+            line(path[(k - 1) * 2], path[(k - 1) * 2 + 1],
+                 path[k * 2], path[k * 2 + 1]);
           }
         }
       }
