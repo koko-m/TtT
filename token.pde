@@ -1,7 +1,10 @@
 class Token {
   Nat copyIndex;
   Nat data;
-  int portId;
+  int portId;                   // id. of the target (next) port
+  float[] path;                 // path on which the token is
+  int pointIndex;               // index of the next corner
+  float distance;               // distance to the next corner
   float x;
   float y;
 
@@ -10,10 +13,13 @@ class Token {
     this.data = data;
   }
 
-  void setNextPort (int portId, float x, float y) {
+  void setNextPort (int portId, float[] path) {
     this.portId = portId;
-    this.x = x;
-    this.y = y;
+    this.path = path;
+    this.pointIndex = 1;
+    this.distance = dist(path[0], path[1], path[2], path[3]);
+    this.x = path[0];
+    this.y = path[1];
   }
 
   void draw () {

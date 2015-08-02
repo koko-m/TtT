@@ -35,11 +35,10 @@ void draw () {
     goRun();
     break;
   case STATE_RUN: case STATE_PAUSE:
-    if (currentState == STATE_RUN) {
-      boolean completed = Td.run();
-      if (completed) goIdle();
-    }
+    boolean terminate = false;
+    if (currentState == STATE_RUN) terminate = Td.run();
     drawZoomedTd();
+    if (terminate) goIdle();
     break;
   }
 }

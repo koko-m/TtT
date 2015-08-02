@@ -1,7 +1,3 @@
-// boolean constants that indicate whether execution is completed
-boolean COMPLETED = true;
-boolean UNCOMPLETED = false;
-
 class Transducer {
   // the bottom left corner of the bounding rectangle has coordinate
   // (0, tdHalfHeight)
@@ -136,7 +132,9 @@ class Transducer {
     int inPortId = this.inPortIds[this.inPortIds.length - 1];
     Port inPort = this.getPort(inPortId);
     this.token = new Token(data);
-    this.token.setNextPort(inPortId, inPort.x, inPort.y);
+    this.token.setNextPort(inPortId,
+                           {inPort.x, inPort.y, inPort.x, inPort.y});
+    this.ports[this.outPortIds[this.outPortIds.length - 1]].setEnd();
   }
 
   void collectPaths () {
@@ -152,24 +150,14 @@ class Transducer {
   }
   
   boolean run () {
-    Port p = this.getPort(this.token.portId);
-    addLog(this.token.copyIndex.prettyPrint() + ", "
-           + this.token.data.prettyPrint() + " at "
-           + this.token.portId + "("
-           + printComputeType(p.computeType) + ":" + p.portIndex
-           + ")");
-    if (this.token.portId
-        == this.outPortIds[this.outPortIds.length - 1]) {
+    boolean terminate =
+      this.getPort(this.token.portId).setNextPort(this.token);
+    if (terminate) {
       addLog("Result: "
              + decodeNatAnswer(this.token.data).prettyPrint()
              + " in copy " + this.token.copyIndex.prettyPrint());
-      return COMPLETED;
-    } else {
-      int nextPortId = p.getNextPortId(token);
-      Port nextP = this.ports[nextPortId];
-      this.token.setNextPort(nextPortId, nextP.x, nextP.y);
-      return UNCOMPLETED;
     }
+    return terminate;
   }
   
   void drawAll () {
