@@ -53,7 +53,7 @@ void drawZoomedTd () {
   translate(OriginRelativeX, OriginRelativeY);
 
   translate(0, height / 2);
-  scale(min(width / Td.tdWidth, height / (Td.tdHalfHeight / 2)));
+  scale(min(width / Td.tdWidth, height / (Td.tdHalfHeight * 2)));
   Td.drawAll();               // draw port ids as well
   // Td.draw();                  // not draw port ids
   popMatrix();
