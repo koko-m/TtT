@@ -14,8 +14,30 @@
 </head>
 
 <body>
+
+<textarea id="logArea" readonly>
+</textarea>
+
 <h1>TtT (Terms to Transducers; under construction)</h1>
-<p>This is a simulation tool of the
+
+<p id="top">
+<input id="term" type="text" value=
+"((lambda(x)(+ x x)) (choose(0.4)3 5))"
+size="100">
+
+<input id="translateButton" type="button" class="button" value="translate" onclick="translateTerm();">
+<input id="startStopButton" type="button" class="button" value="start" onclick="startClicked();">
+<input id="pauseResumeButton" type="button" class="button" value="pause" onclick="pauseClicked();">
+</p>
+
+<p id="center">
+<canvas id="canvas" datasrc="main.pde transducer.pde port.pde box.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
+Sorry, please try another browser that supports Canvas :(
+</canvas>
+</p>
+
+<p id="bottom">
+This is a simulation tool of the
 <a href="http://dl.acm.org/citation.cfm?doid=2603088.2603124">
 <em>memoryful GoI</em></a>
 framework.<br>
@@ -26,32 +48,6 @@ using
 <a href="http://processingjs.org/">Processing.js</a> v1.4.8 and
 <a href="http://pegjs.org/">PEG.js</a> v0.8.0.
 </p>
-
-<p>
-<div id="input">
-Term:
-<input type="text" id="term" value=
-"((lambda(x)(+ x x)) (choose(0.4)3 5))"
-size="100">
-<font color="red" id="errMsg"></font>
-</div>
-<div id="buttons">
-<input type="button" value="translate" onclick="translateTerm();">
-</div>
-</p>
-
-<div id="area">
-<canvas id="canvas" datasrc="main.pde transducer.pde port.pde box.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
-Sorry, please try another browser that supports Canvas :(
-</canvas>
-
-<textarea id="logArea" style="float:right; resize:none;">
-</textarea>
-
-<script type="text/javascript">
-setLogAreaSize();
-</script>
-</div>
 
 </body>
 </html>

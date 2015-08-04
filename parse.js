@@ -6,8 +6,6 @@ function getTd () { return td; }
 
 function translateTerm () {
     try {
-	var errMsg = document.getElementById("errMsg");
-	errMsg.textContent = null;
 	var processingInstance = Processing.getInstanceById("canvas");
 	var newTd =
 	    processingInstance.interpret(
@@ -20,12 +18,21 @@ function translateTerm () {
     } catch (err) {
 	switch (err.name) {
 	case "SyntaxError":
-	    errMsg.textContent =
-		err.name + " at (" + err.line + "," + err.column + "): "
-		+ err.message;
+	    addLog("****************\n"
+		   + err.name
+		   + " at (" + err.line + "," + err.column + "): "
+		   + err.message
+		   + "\nInput is ignored."
+		   + "\n****************");
 	    break;
 	case "Error":
-	    errMsg.textContent = err.name + ": " + err.message;
+	    addLog("****************\n"
+		   + err.name + ": " + err.message
+		   + "\nInput is ignored."
+		   + "\n****************");
+	    break;
+	default:
+	    console.log(err);
 	    break;
 	}
 	switch (getState()) {

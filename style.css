@@ -1,3 +1,7 @@
+html {
+    height: 100%;
+}
+
 a:link {
     color: #2d7883;
     text-decoration: underline;
@@ -12,12 +16,14 @@ body {
     font-family: Arial,Helvetica,sans-serif;
     color: #292d24;
     background-color: #ffffff;
+    height: 95%;
 }
 
 h1 {
     color: #ffffff;
     background-color: #863b3d;
     /* margin: 10px; */
+    width: 75%;
     padding-left: 20px;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -49,4 +55,15 @@ li li {
 
 li span {
     color: #292d24;
+}
+
+textarea#logArea {
+    width: 20%;
+    height: 100%;
+    resize: none;
+    float: right;
+}
+
+.button {
+    border: medium solid #292d24;
 }

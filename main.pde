@@ -33,7 +33,7 @@ void draw () {
     ZoomY = 0;
     drawZoomedTd();
     clearLog();
-    goRun();
+    goPause();
     break;
   case STATE_RUN: case STATE_PAUSE:
     boolean terminate = false;
@@ -75,35 +75,39 @@ void mouseOut () {
 int scrollCount = 0;
 
 void mouseScrolled () {
-  if (mouseScroll > 0) scrollCount += 1;
-  if (mouseScroll < 0) scrollCount -= 1;
-  if (abs(scrollCount) > 2) { // remove noise
-    OriginRelativeX =
-      (ZoomX - mouseX) / ScaleValue + OriginRelativeX;
-    OriginRelativeY =
-      (ZoomY - mouseY) / ScaleValue + OriginRelativeY;
-    ZoomX = mouseX;
-    ZoomY = mouseY;
-    if (mouseScroll > 0) {
-      ScaleValue = max(ScaleValue
-                       + SCALE_COEFFICIENT * pow(mouseScroll, 2),
-                       1);
-    } else {
-      ScaleValue = max(ScaleValue
-                       - SCALE_COEFFICIENT * pow(mouseScroll, 2),
-                       1);
+  if (over) {
+    if (mouseScroll > 0) scrollCount += 1;
+    if (mouseScroll < 0) scrollCount -= 1;
+    if (abs(scrollCount) > 2) { // remove noise
+      OriginRelativeX =
+        (ZoomX - mouseX) / ScaleValue + OriginRelativeX;
+      OriginRelativeY =
+        (ZoomY - mouseY) / ScaleValue + OriginRelativeY;
+      ZoomX = mouseX;
+      ZoomY = mouseY;
+      if (mouseScroll > 0) {
+        ScaleValue = max(ScaleValue
+                         + SCALE_COEFFICIENT * pow(mouseScroll, 2),
+                         1);
+      } else {
+        ScaleValue = max(ScaleValue
+                         - SCALE_COEFFICIENT * pow(mouseScroll, 2),
+                         1);
+      }
+      scrollCount = 0;
     }
-    scrollCount = 0;
   }
 }
 
 boolean dragging = false;
 
 void mouseDragged () {
-  dragging = true;
-  cursor(CROSS);
-  OriginRelativeX += mouseX - pmouseX;
-  OriginRelativeY += mouseY - pmouseY;
+  if (over) {
+    dragging = true;
+    cursor(CROSS);
+    OriginRelativeX += mouseX - pmouseX;
+    OriginRelativeY += mouseY - pmouseY;
+  }
 }
 
 void mouseReleased () {
@@ -115,10 +119,10 @@ void mouseReleased () {
 }
 
 void mouseClicked () {
-  switch (State) {
+  switch (getState()) {
   case STATE_IDLE: case STATE_READY: break;
-  case STATE_RUN: goPause(); break;
-  case STATE_PAUSE: goResume(); break;
+  case STATE_RUN: pauseClicked(); break;
+  case STATE_PAUSE: resumeClicked(); break;
   }
 }
 
