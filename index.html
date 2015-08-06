@@ -21,9 +21,23 @@
 <h1>TtT (Terms to Transducers; under construction)</h1>
 
 <p id="top">
-<input id="term" type="text" value=
-"((lambda(x)(+ x x)) (choose(0.4)3 5))"
-size="100">
+<input id="term" type="text"
+value="((lambda(x) (+ x x)) (choose(0.4) 3 5))"
+size="100" autocomplete="on" list="examples"
+title="type &quot;;ex&quot; to select one of 10 examples">
+<datalist id="examples">
+<option value="(choose(0.4) 3 5) ;exChoose">
+<option value="((lambda(x) 1) 0) ;exConst">
+<option value="((lambda(x) 1) (choose(0.4) 3 5)) ;exConstChoose">
+<option value="((lambda(x) x) 1) ;exId">
+<option value="((lambda(x) x) (choose(0.4) 3 5)) ;exIdChoose">
+<option value="((lambda(x) (+ x x)) (choose(0.4) 3 5)) ;exSumChoose">
+<option value="((lambda(x) (choose(0.4) x (+ x x))) (choose(0.4) 3 5)) ;exFuncChoose">
+<option value="((lambda(f) (+ (f 0) (f 1))) (lambda(x) (choose(0.4) 3 5))) ;exHOChoose">
+<option value="((lambda(f) (choose(0.4) (f 0) (f 1))) (lambda(x) (+ x x))) ;exHOFuncChoose">
+<option value="((rec(flipLoop x) (match (choose(0.4) (inl *) (inr *)) ((inl
+ y) x) ((inr z) (flipLoop x)))) *) ;exFlipLoopUntilHead">
+</datalist>
 
 <input id="startButton" type="button" class="button" value="start" onclick="translateTerm();">
 <input id="pauseResumeButton" type="button" class="button" value="pause" onclick="goPause();" disabled>

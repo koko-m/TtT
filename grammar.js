@@ -86,10 +86,12 @@ function isEqual (term1, term2) {
 /* PEG Rules */
 
 var rules = [
-    "start = expr",
+    "start = body:expr comment {return body;}",
     // spaces
     "spS = ' '*",
     "spP = ' '+",
+    // comments (can be nested): ignored
+    "comment = (spS ';' spS .*)*",
     // terms (expressions)
     "expr = base / composed",
     "base = var / const",
