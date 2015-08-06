@@ -37,7 +37,12 @@ input#term {
 }
 
 input#speedRange {
-    width: 8%;
+    width: 20%;
+    vertical-align: middle;
+}
+
+input#speedNum {
+    width: 3em;
     vertical-align: middle;
 }
 
@@ -53,6 +58,11 @@ textarea#logArea {
     height: 100%;
     resize: none;
     float: right;
+}
+
+canvas#canvas {
+    margin: 0px;
+    padding: 0px;
 }
 
 p#bottomBlock {

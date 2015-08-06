@@ -67,12 +67,17 @@ function getSpeed () { return Speed; }
 function resetSpeed () {
     Speed = 100;
     document.getElementById("speedRange").value = 100;
-    document.getElementById("showSpeed").innerHTML = "100%";
+    document.getElementById("speedNum").value = 100;
 }
 
-function changeSpeed () {
+function changeSpeedR () {
     Speed = Number(document.getElementById("speedRange").value);
-    document.getElementById("showSpeed").innerHTML = Speed + "%";
+    document.getElementById("speedNum").value = Speed;
+}
+
+function changeSpeedN () {
+    Speed = Number(document.getElementById("speedNum").value);
+    document.getElementById("speedRange").value = Speed;
 }
 
 // size of the canvas (see style.css)
