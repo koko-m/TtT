@@ -15,6 +15,7 @@ function goIdle () {
     prButton.value = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = true;
+    document.getElementById("flashButton").disabled = true;
     State = STATE_IDLE;
 }
 
@@ -29,6 +30,7 @@ function goRun () {
     prButton.value = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = false;
+    document.getElementById("flashButton").disabled = false;
     State = STATE_RUN;
 }
 
@@ -39,6 +41,7 @@ function goPause () {
 	var prButton = document.getElementById("pauseResumeButton");
 	prButton.value = "resume";
 	prButton.onclick = new Function("goResume();");
+	document.getElementById("flashButton").disabled = true;
 	State = STATE_PAUSE;
 	break;
     default: break;
@@ -52,6 +55,7 @@ function goResume () {
 	var prButton = document.getElementById("pauseResumeButton");
 	prButton.value = "pause";
 	prButton.onclick = new Function("goPause();");
+	document.getElementById("flashButton").disabled = false;
 	State = STATE_RUN;
 	break;
     default: break;
@@ -79,6 +83,32 @@ function changeSpeedN () {
     Speed = Number(document.getElementById("speedNum").value);
     document.getElementById("speedRange").value = Speed;
 }
+
+// modes of animation
+
+var frameByframe = false;
+
+function isFrameByFrameMode () { return frameByframe; }
+
+function toggleFrameByFrame () {
+    frameByframe = !frameByframe;
+    if (frameByframe) {
+	document.getElementById("FbFSwitch").className = "switchOn";
+    } else {
+	document.getElementById("FbFSwitch").className = "switchOff";
+    }
+}
+
+var flashFlag = false;
+
+function toFlash () { return flashFlag; }
+
+function flashed () { flashFlag = false; }
+
+function flash () {
+    flashFlag = true;
+}
+
 
 // size of the canvas (see style.css)
 

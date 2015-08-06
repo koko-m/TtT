@@ -151,6 +151,25 @@ class Transducer {
   
   boolean run () {
     boolean terminate = false;
+    if (toFlash()) {
+      this.token.distance = 0;
+      this.token.put();
+      terminate =
+        this.getPort(this.token.portId).setNextPort(this.token);
+      if (terminate) {
+        addLog("Result: "
+               + decodeNatAnswer(this.token.data).prettyPrint()
+               + " in copy " + this.token.copyIndex.prettyPrint());
+      }
+      flashed();
+      return terminate;
+    }
+    if (isFrameByFrameMode()
+        && FrameByFrameCounter <= FRAME_BY_FRAME_SEC * frameRate) {
+      FrameByFrameCounter++;
+      return terminate;
+    }
+    FrameByFrameCounter = 0;
     this.token.step();
     while (this.token.distance < 0) {
       this.token.updatePointIndex();

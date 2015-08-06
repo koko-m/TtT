@@ -6,6 +6,7 @@ float OriginRelativeX;
 float OriginRelativeY;
 float ZoomX;
 float ZoomY;
+int FrameByFrameCounter;
 
 void setup () {
   size(getCanvasWidth(), getCanvasHeight());
@@ -32,6 +33,7 @@ void draw () {
     OriginRelativeY = 0;
     ZoomX = 0;
     ZoomY = 0;
+    FrameByFrameCounter = 0;
     drawZoomedTd();
     goRun();
     break;
@@ -159,3 +161,5 @@ float PRIM_INTERVAL = UNIT_LENGTH * 4;
 float TOKEN_DIAMETER = UNIT_LENGTH;
 
 float TOKEN_SPEED = UNIT_LENGTH;
+
+int FRAME_BY_FRAME_SEC = 1;
