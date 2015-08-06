@@ -150,9 +150,12 @@ class Transducer {
   }
   
   boolean run () {
+    boolean terminate = false;
     this.token.step();
     while (this.token.distance < 0) {
-      boolean terminate =
+      this.token.updatePointIndex();
+      if (this.token.distance >= 0) break;
+      terminate =
         this.getPort(this.token.portId).setNextPort(this.token);
       if (terminate) {
         addLog("Result: "
