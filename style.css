@@ -46,21 +46,28 @@ input#speedNum {
     vertical-align: middle;
 }
 
-input.button {
-    /* width: 4%; */
-    border: medium solid #292d24;
+span#speed {
+    white-space: nowrap;
 }
 
-input.switchOff {
-    /* width: 4%; */
-    color: #292d24;
-    border: medium solid #292d24;
-}
-
-input.switchOn {
-    /* width: 4%; */
+input.buttonOnImg {
     color: #ae4f55;
-    border: medium solid #ae4f55;
+    width: 12px;
+    height: 12px;
+    padding: 2px;
+    border: 2.5px solid #ae4f55;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+
+input.buttonOffImg {
+    color: #292d24;
+    width: 12px;
+    height: 12px;
+    padding: 2px;
+    border: 2.5px solid #292d24;
+    border-radius: 2px;
+    vertical-align: middle;
 }
 
 textarea#logArea {

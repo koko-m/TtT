@@ -151,7 +151,7 @@ class Transducer {
   
   boolean run () {
     boolean terminate = false;
-    if (toFlash()) {
+    if (toSkip()) {
       this.token.distance = 0;
       this.token.put();
       terminate =
@@ -161,7 +161,7 @@ class Transducer {
                + decodeNatAnswer(this.token.data).prettyPrint()
                + " in copy " + this.token.copyIndex.prettyPrint());
       }
-      flashed();
+      skipped();
       return terminate;
     }
     if (isFrameByFrameMode()

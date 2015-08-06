@@ -12,10 +12,12 @@ function getState () { return State; }
 function goIdle () {
     addLog("terminate");
     var prButton = document.getElementById("pauseResumeButton");
-    prButton.value = "pause";
+    prButton.src = "icons/pause.png";
+    prButton.alt = "pause";
+    prButton.title = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = true;
-    document.getElementById("flashButton").disabled = true;
+    document.getElementById("skipButton").disabled = true;
     State = STATE_IDLE;
 }
 
@@ -24,13 +26,22 @@ function goReady () { State = STATE_READY; }
 function goRun () {
     clearLog();
     addLog("run");
-    var ssButton = document.getElementById("startButton");
-    ssButton.value = "restart";
+    var sButton = document.getElementById("startButton");
+    if (sButton.alt = "start")
+	blinkButton(sButton,
+		    "icons/startOn.png", "icons/restart.png");
+    else
+	blinkButton(sButton,
+		    "icons/restartOn.png", "icons/restart.png");
+    sButton.alt = "restart";
+    sButton.title = "restart";
     var prButton = document.getElementById("pauseResumeButton");
-    prButton.value = "pause";
+    prButton.src = "icons/pause.png";
+    prButton.alt = "pause";
+    prButton.title = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = false;
-    document.getElementById("flashButton").disabled = false;
+    document.getElementById("skipButton").disabled = false;
     State = STATE_RUN;
 }
 
@@ -39,9 +50,11 @@ function goPause () {
     case STATE_RUN:
 	addLog("pause");
 	var prButton = document.getElementById("pauseResumeButton");
-	prButton.value = "resume";
+	blinkButton(prButton, "icons/pauseOn.png", "icons/start.png");
+	prButton.alt = "resume";
+	prButton.title = "resume";
 	prButton.onclick = new Function("goResume();");
-	document.getElementById("flashButton").disabled = true;
+	document.getElementById("skipButton").disabled = true;
 	State = STATE_PAUSE;
 	break;
     default: break;
@@ -53,13 +66,26 @@ function goResume () {
     case STATE_PAUSE:
 	addLog("resume");
 	var prButton = document.getElementById("pauseResumeButton");
-	prButton.value = "pause";
+	blinkButton(prButton, "icons/startOn.png", "icons/pause.png");
+	prButton.alt = "pause";
+	prButton.title = "pause";
 	prButton.onclick = new Function("goPause();");
-	document.getElementById("flashButton").disabled = false;
+	document.getElementById("skipButton").disabled = false;
 	State = STATE_RUN;
 	break;
     default: break;
     }
+}
+
+// blink buttons when clicked
+
+function blinkButton (button, file, nextFile) {
+    button.className = "buttonOnImg";
+    button.src = file;
+    setTimeout(function ()
+	       {button.className = "buttonOffImg";
+		button.src = nextFile;
+	       }, 180);
 }
 
 // speed of animation
@@ -92,23 +118,27 @@ function isFrameByFrameMode () { return frameByframe; }
 
 function toggleFrameByFrame () {
     frameByframe = !frameByframe;
+    var fbfSwitch = document.getElementById("FbFSwitch");
     if (frameByframe) {
-	document.getElementById("FbFSwitch").className = "switchOn";
+	fbfSwitch.className = "buttonOnImg";
+	fbfSwitch.src = "icons/fbfOn.png";
     } else {
-	document.getElementById("FbFSwitch").className = "switchOff";
+	fbfSwitch.className = "buttonOffImg";
+	fbfSwitch.src = "icons/fbf.png";
     }
 }
 
-var flashFlag = false;
+var skipFlag = false;
 
-function toFlash () { return flashFlag; }
+function toSkip () { return skipFlag; }
 
-function flashed () { flashFlag = false; }
+function skipped () { skipFlag = false; }
 
-function flash () {
-    flashFlag = true;
+function skip () {
+    blinkButton(document.getElementById("skipButton"),
+		"icons/skipOn.png", "icons/skip.png");
+    skipFlag = true;
 }
-
 
 // size of the canvas (see style.css)
 

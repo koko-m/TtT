@@ -38,20 +38,27 @@ title="type &quot;;ex&quot; to select one from 10 examples">
  y) x) ((inr z) (flipLoop x)))) *) ;exFlipLoopUntilHead">
 </datalist>
 
-<input id="startButton" type="button" class="button"
-value="start" onclick="translateTerm();">
-<input id="pauseResumeButton" type="button" class="button"
-value="pause" onclick="goPause();" disabled>
-<input id="flashButton" type="button" class="button"
-value="flash" onclick="flash();" disabled>
-<input id="FbFSwitch" type="button" class="switchOff"
-value="frame-by-frame" onclick="toggleFrameByFrame();">
+<input id="startButton" type="image" class="buttonOffImg"
+src="icons/start.png" alt="start" title="start"
+onclick="translateTerm();">
+<input id="pauseResumeButton" type="image" class="buttonOffImg"
+src="icons/pause.png" alt="pause" title="pause"
+onclick="goPause();" disabled>
+<input id="skipButton" type="image" class="buttonOffImg"
+src="icons/skip.png" alt="skip" title="skip"
+onclick="skip();" disabled>
+<input id="FbFSwitch" type="image" class="buttonOffImg"
+src="icons/fbf.png" alt="frame-by-frame" title="toggle frame-by-frame mode"
+onclick="toggleFrameByFrame();">
+
+<span id="speed">
 <input id="speedRange" type="range"
 min="20" max="400" step="20" value="100" oninput="changeSpeedR();"
 title="speed (%)">
 <input id="speedNum" type="number"
 min="20" max="400" step="20" value="100" oninput="changeSpeedN();"
 title="speed (%)">
+</span>
 </p>
 
 <!-- <p id="middleBlock"> -->
