@@ -74,3 +74,42 @@ function changeSpeed () {
     Speed = Number(document.getElementById("speedRange").value);
     document.getElementById("showSpeed").innerHTML = Speed + "%";
 }
+
+// size of the canvas (see style.css)
+
+function getCanvasWidth () {
+    return document.getElementById("head").clientWidth;
+}
+function getCanvasHeight () {
+    var bodyHeight = document.body.clientHeight;
+    // head has no margin but paddings outside
+    var headHeight = document.getElementById("head").clientHeight;
+    var headPaddingTop = parseInt
+    (window.getComputedStyle(document.getElementById("head"),
+			     null).paddingTop);
+    var headPaddingBottom = parseInt
+    (window.getComputedStyle(document.getElementById("head"),
+			     null).paddingBottom);
+    // topBlock has margins
+    var topBlockHeight =
+	document.getElementById("topBlock").clientHeight;
+    var topBlockMarginTop = parseInt
+    (window.getComputedStyle(document.getElementById("topBlock"),
+			     null).marginTop);
+    var topBlockMarginBottom = parseInt
+    (window.getComputedStyle(document.getElementById("topBlock"),
+			     null).marginBottom);
+    // bottomBlock has margin-top only
+    var bottomBlockHeight =
+	document.getElementById("bottomBlock").clientHeight;
+    var bottomBlockMarginTop = parseInt
+    (window.getComputedStyle(document.getElementById("bottomBlock"),
+			     null).marginTop);
+    return bodyHeight
+	- headPaddingTop
+	- headHeight - headPaddingBottom
+	- topBlockMarginTop
+	- topBlockHeight - topBlockMarginBottom
+	- bottomBlockMarginTop
+	- bottomBlockHeight;
+}

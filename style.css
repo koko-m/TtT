@@ -19,51 +19,42 @@ body {
     height: 95%;
 }
 
-h1 {
+h1#head {
     color: #ffffff;
     background-color: #863b3d;
-    /* margin: 10px; */
+    margin: 0px;
     width: 75%;
-    padding-left: 20px;
+    box-sizing: border-box;
+    padding-left: 1em;
+    padding-right: 1em;
     padding-top: 5px;
     padding-bottom: 5px;
     font-weight:normal;
 }
 
-h2 {
-    color: #ffffff;
-    background-color: #ae4f55;
-    /* margin: 10px; */
-    padding-left: 20px;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    font-weight:normal;
+input#term {
+    width: 45%;
 }
 
-li {
-    list-style-type: disc;
-    padding-left: 10px;
-    padding-bottom: 10px;
-    color: #2c5055;
+input#speedRange {
+    width: 8%;
+    vertical-align: middle;
 }
 
-li li {
-    list-style-type: disc;
-    padding-bottom: 0px;
-    color: #2c5055;
-}
-
-li span {
-    color: #292d24;
+input.button {
+    /* width: 4%; */
+    border: medium solid #292d24;
 }
 
 textarea#logArea {
-    width: 20%;
+    margin: 0px;
+    padding: 0px;
+    width: 24%;
     height: 100%;
     resize: none;
     float: right;
 }
 
-.button {
-    border: medium solid #292d24;
+p#bottomBlock {
+    margin-bottom: 0px;
 }

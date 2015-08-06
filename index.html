@@ -9,7 +9,6 @@
 <script type="text/javascript" src="control.js"></script>
 <script type="text/javascript" src="grammar.js"></script>
 <script type="text/javascript" src="parse.js"></script>
-<script type="text/javascript" src="fixSize.js"></script>
 <script type="text/javascript" src="logArea.js"></script>
 </head>
 
@@ -18,13 +17,13 @@
 <textarea id="logArea" readonly>
 </textarea>
 
-<h1>TtT (Terms to Transducers; under construction)</h1>
+<h1 id="head">TtT (Terms to Transducers; under construction)</h1>
 
-<p id="top">
+<p id="topBlock">
 <input id="term" type="text"
 value="((lambda(x) (+ x x)) (choose(0.4) 3 5))"
 size="100" autocomplete="on" list="examples"
-title="type &quot;;ex&quot; to select one of 10 examples">
+title="type &quot;;ex&quot; to select one from 10 examples">
 <datalist id="examples">
 <option value="(choose(0.4) 3 5) ;exChoose">
 <option value="((lambda(x) 1) 0) ;exConst">
@@ -39,19 +38,23 @@ title="type &quot;;ex&quot; to select one of 10 examples">
  y) x) ((inr z) (flipLoop x)))) *) ;exFlipLoopUntilHead">
 </datalist>
 
-<input id="startButton" type="button" class="button" value="start" onclick="translateTerm();">
-<input id="pauseResumeButton" type="button" class="button" value="pause" onclick="goPause();" disabled>
-<input id="speedRange" name="speedRange" type="range" min="20" max="400" step="20" value="100" oninput="changeSpeed();" title="change speed">
-<span id="showSpeed"></span>
+<input id="startButton" type="button" class="button"
+value="start" onclick="translateTerm();">
+<input id="pauseResumeButton" type="button" class="button"
+value="pause" onclick="goPause();" disabled>
+<input id="speedRange" name="speedRange" type="range"
+min="20" max="400" step="20" value="100" oninput="changeSpeed();"
+title="change speed">
+<span id="showSpeed" title="speed"></span>
 </p>
 
-<p id="center">
+<!-- <p id="middleBlock"> -->
 <canvas id="canvas" datasrc="main.pde transducer.pde port.pde box.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
 Sorry, please try another browser that supports Canvas :(
 </canvas>
-</p>
+<!-- </p> -->
 
-<p id="bottom">
+<p id="bottomBlock">
 This is a simulation tool of the
 <a href="http://dl.acm.org/citation.cfm?doid=2603088.2603124">
 <em>memoryful GoI</em></a>
