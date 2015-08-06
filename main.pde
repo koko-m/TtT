@@ -13,6 +13,7 @@ void setup () {
   frameRate(20);
   Td = null;
   clearLog();
+  resetSpeed();
 }
 
 void draw () {
