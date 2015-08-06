@@ -8,56 +8,50 @@ var State = STATE_IDLE;
 
 function getState () { return State; }
 
-function goIdle () { addLog("terminate"); State = STATE_IDLE; }
+function goIdle () {
+    addLog("terminate");
+    var prButton = document.getElementById("pauseResumeButton");
+    prButton.value = "pause";
+    prButton.onclick = new Function("goPause();");
+    prButton.disabled = true;
+    State = STATE_IDLE;
+}
+
 function goReady () { State = STATE_READY; }
-function goRun () { addLog("run"); State = STATE_RUN; }
-function goPause () { addLog("pause"); State = STATE_PAUSE; }
-function goResume () { addLog("resume"); State = STATE_RUN; }
 
-function startClicked () {
-    switch (State) {
-    case STATE_PAUSE:
-	var button = document.getElementById("startStopButton");
-	button.value = "stop";
-	button.onclick = new Function("stopClicked();");
-	goRun();
-	break;
-    default: break;
-    }
+function goRun () {
+    clearLog();
+    addLog("run");
+    var ssButton = document.getElementById("startButton");
+    ssButton.value = "restart";
+    var prButton = document.getElementById("pauseResumeButton");
+    prButton.value = "pause";
+    prButton.onclick = new Function("goPause();");
+    prButton.disabled = false;
+    State = STATE_RUN;
 }
 
-function stopClicked () {
-    switch (State) {
-    case STATE_RUN: case STATE_PAUSE:
-	var button = document.getElementById("startStopButton");
-	button.value = "start";
-	button.onclick = new Function("startClicked();");
-	addLog("terminate");
-	goReady();
-	break;
-    default: break;
-    }
-}
-
-function pauseClicked () {
+function goPause () {
     switch (State) {
     case STATE_RUN:
-	var button = document.getElementById("pauseResumeButton");
-	button.value = "resume";
-	button.onclick = new Function("resumeClicked();");
-	goPause();
+	addLog("pause");
+	var prButton = document.getElementById("pauseResumeButton");
+	prButton.value = "resume";
+	prButton.onclick = new Function("goResume();");
+	State = STATE_PAUSE;
 	break;
     default: break;
     }
 }
 
-function resumeClicked () {
+function goResume () {
     switch (State) {
     case STATE_PAUSE:
-	var button = document.getElementById("pauseResumeButton");
-	button.value = "pause";
-	button.onclick = new Function("pauseClicked();");
-	goResume();
+	addLog("resume");
+	var prButton = document.getElementById("pauseResumeButton");
+	prButton.value = "pause";
+	prButton.onclick = new Function("goPause();");
+	State = STATE_RUN;
 	break;
     default: break;
     }

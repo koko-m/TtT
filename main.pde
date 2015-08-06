@@ -32,8 +32,7 @@ void draw () {
     ZoomX = 0;
     ZoomY = 0;
     drawZoomedTd();
-    clearLog();
-    goPause();
+    goRun();
     break;
   case STATE_RUN: case STATE_PAUSE:
     boolean terminate = false;
@@ -121,8 +120,8 @@ void mouseReleased () {
 void mouseClicked () {
   switch (getState()) {
   case STATE_IDLE: case STATE_READY: break;
-  case STATE_RUN: pauseClicked(); break;
-  case STATE_PAUSE: resumeClicked(); break;
+  case STATE_RUN: goPause(); break;
+  case STATE_PAUSE: goResume(); break;
   }
 }
 
