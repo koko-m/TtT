@@ -24,7 +24,7 @@ class Token {
   }
 
   void step () {
-    this.distance -= TOKEN_SPEED;
+    this.distance -= TOKEN_SPEED * getSpeed() / 100;
     while (this.distance < 0
            && this.pointIndex + 1 < this.path.length / 2) {
       this.distance += dist(this.path[this.pointIndex * 2],

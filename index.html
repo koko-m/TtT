@@ -41,6 +41,8 @@ title="type &quot;;ex&quot; to select one of 10 examples">
 
 <input id="startButton" type="button" class="button" value="start" onclick="translateTerm();">
 <input id="pauseResumeButton" type="button" class="button" value="pause" onclick="goPause();" disabled>
+<input id="speedRange" name="speedRange" type="range" min="20" max="400" step="20" value="100" oninput="changeSpeed();" title="change speed">
+<span id="showSpeed"></span>
 </p>
 
 <p id="center">

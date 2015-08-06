@@ -1,4 +1,5 @@
 // states of controller
+
 var STATE_IDLE = 0;
 var STATE_READY = 1;
 var STATE_RUN = 2;
@@ -55,4 +56,21 @@ function goResume () {
 	break;
     default: break;
     }
+}
+
+// speed of animation
+
+var Speed = 100;
+
+function getSpeed () { return Speed; }
+
+function resetSpeed () {
+    Speed = 100;
+    document.getElementById("speedRange").value = 100;
+    document.getElementById("showSpeed").innerHTML = "100%";
+}
+
+function changeSpeed () {
+    Speed = Number(document.getElementById("speedRange").value);
+    document.getElementById("showSpeed").innerHTML = Speed + "%";
 }
