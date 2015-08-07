@@ -10,7 +10,7 @@ var State = STATE_IDLE;
 function getState () { return State; }
 
 function goIdle () {
-    addLog("terminate");
+    addConsole("terminate");
     var prButton = document.getElementById("pauseResumeButton");
     prButton.src = "icons/pause.png";
     prButton.alt = "pause";
@@ -25,7 +25,7 @@ function goReady () { State = STATE_READY; }
 
 function goRun () {
     clearLog();
-    addLog("run");
+    addConsole("run");
     var sButton = document.getElementById("startButton");
     if (sButton.alt = "start")
 	blinkButton(sButton,
@@ -48,7 +48,7 @@ function goRun () {
 function goPause () {
     switch (State) {
     case STATE_RUN:
-	addLog("pause");
+	addConsole("pause");
 	var prButton = document.getElementById("pauseResumeButton");
 	blinkButton(prButton, "icons/pauseOn.png", "icons/start.png");
 	prButton.alt = "resume";
@@ -64,7 +64,7 @@ function goPause () {
 function goResume () {
     switch (State) {
     case STATE_PAUSE:
-	addLog("resume");
+	addConsole("resume");
 	var prButton = document.getElementById("pauseResumeButton");
 	blinkButton(prButton, "icons/startOn.png", "icons/pause.png");
 	prButton.alt = "pause";
@@ -120,9 +120,11 @@ function toggleFrameByFrame () {
     frameByframe = !frameByframe;
     var fbfSwitch = document.getElementById("FbFSwitch");
     if (frameByframe) {
+	addConsole("frame-by-frame mode on");
 	fbfSwitch.className = "buttonOnImg";
 	fbfSwitch.src = "icons/fbfOn.png";
     } else {
+	addConsole("frame-by-frame mode off");
 	fbfSwitch.className = "buttonOffImg";
 	fbfSwitch.src = "icons/fbf.png";
     }

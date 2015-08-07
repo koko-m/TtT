@@ -76,12 +76,23 @@ input.buttonOffImg {
     vertical-align: middle;
 }
 
+textarea#consoleArea {
+    margin: 0px;
+    padding: 0px;
+    width: 24%;
+    height: 10%;
+    margin-bottom: 1%;
+    resize: none;
+    float: right;
+}
+
 textarea#logArea {
     margin: 0px;
     padding: 0px;
     width: 24%;
-    height: 100%;
+    height: 88%;
     resize: none;
+    clear: right;
     float: right;
 }
 

@@ -14,6 +14,7 @@ void setup () {
   frameRate(20);
   Td = null;
   clearLog();
+  clearConsole();
   resetSpeed();
 }
 

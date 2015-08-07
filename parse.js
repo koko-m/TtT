@@ -18,18 +18,18 @@ function translateTerm () {
     } catch (err) {
 	switch (err.name) {
 	case "SyntaxError":
-	    addLog("****************\n"
-		   + err.name
-		   + " at (" + err.line + "," + err.column + "): "
-		   + err.message
-		   + "\nInput is ignored."
-		   + "\n****************");
+	    addConsole("****************\n"
+		       + err.name
+		       + " at (" + err.line + "," + err.column + "): "
+		       + err.message
+		       + "\nInput is ignored."
+		       + "\n****************");
 	    break;
 	case "Error":
-	    addLog("****************\n"
-		   + err.name + ": " + err.message
-		   + "\nInput is ignored."
-		   + "\n****************");
+	    addConsole("****************\n"
+		       + err.name + ": " + err.message
+		       + "\nInput is ignored."
+		       + "\n****************");
 	    break;
 	default:
 	    console.log(err);
