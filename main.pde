@@ -120,8 +120,8 @@ void mouseDragged () {
   if (over) {
     dragging = true;
     cursor(CROSS);
-    OriginRelativeX += mouseX - pmouseX;
-    OriginRelativeY += mouseY - pmouseY;
+    OriginRelativeX += (mouseX - pmouseX) / ScaleValue;
+    OriginRelativeY += (mouseY - pmouseY) / ScaleValue;
   }
 }
 
