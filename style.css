@@ -37,7 +37,8 @@ input#term {
 }
 
 input#speedRange {
-    width: 20%;
+    /* width: 20%; */
+    width: 150px;
     height: 12px;
     vertical-align: middle;
 }
@@ -54,6 +55,7 @@ span#speed {
     border: 2.5px solid #292d24;
     border-radius: 2px;
     vertical-align: middle;
+    margin-right: 4px;
 }
 
 input.buttonOnImg {

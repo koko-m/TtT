@@ -144,6 +144,18 @@ function skip () {
     skipFlag = true;
 }
 
+var centerFlag = false;
+
+function toCenter () { return centerFlag; }
+
+function centered () { centerFlag = false; }
+
+function center () {
+    blinkButton(document.getElementById("centerButton"),
+		"icons/centerOn.png", "icons/center.png");
+    centerFlag = true;
+}
+
 // size of the canvas (see style.css)
 
 function getCanvasWidth () {

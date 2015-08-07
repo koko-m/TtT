@@ -22,18 +22,20 @@ void draw () {
   byte currentState = getState();
   switch (currentState) {
   case STATE_IDLE:
-    if (Td != null) drawZoomedTd();
+    if (Td != null) {
+      if (toCenter()) {
+        clearZoom();
+        centered();
+      }
+      drawZoomedTd();
+    }
     break;
   case STATE_READY:
     Td = getTd();
     Td.collectPaths();
     Td.debug(true);
     Td.initToken(encodeNatQuery());
-    ScaleValue = 1;
-    OriginRelativeX = 0;
-    OriginRelativeY = 0;
-    ZoomX = 0;
-    ZoomY = 0;
+    clearZoom();
     FrameByFrameCounter = 0;
     drawZoomedTd();
     goRun();
@@ -41,6 +43,10 @@ void draw () {
   case STATE_RUN: case STATE_PAUSE:
     boolean terminate = false;
     if (currentState == STATE_RUN) terminate = Td.run();
+    if (toCenter()) {
+      clearZoom();
+      centered();
+    }
     drawZoomedTd();
     if (terminate) goIdle();
     break;
@@ -62,7 +68,13 @@ void drawZoomedTd () {
   popMatrix();
 }
 
-
+void clearZoom () {
+  ScaleValue = 1;
+  OriginRelativeX = 0;
+  OriginRelativeY = 0;
+  ZoomX = 0;
+  ZoomY = 0;
+}
 
 boolean over = false;
 
@@ -130,13 +142,7 @@ void mouseClicked () {
 }
 
 void keyTyped () {
-  if (key == 'c') {             // clear zoom
-    ScaleValue = 1;
-    OriginRelativeX = 0;
-    OriginRelativeY = 0;
-    ZoomX = 0;
-    ZoomY = 0;
-  }
+  if (key == 'c') clearZoom();
 }
 
 // macros
