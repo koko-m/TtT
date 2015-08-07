@@ -7,11 +7,13 @@ class Token {
   float distance;               // distance to the next point
   float x;
   float y;
+  String indent;
 
   Token (Nat data) {
     this.copyIndex = new Nat(); // dummy value
     this.data = data;
     this.distance = 0;
+    this.indent = "";
   }
 
   void setNextPort (int portId, float[] path) {
@@ -63,5 +65,13 @@ class Token {
     textAlign(LEFT, CENTER);
     text(this.data.prettyPrint(),
          this.x + TOKEN_DIAMETER / 2 + TEXT_MARGIN, this.y);
+  }
+
+  void increaseIndent () {
+    this.indent += INDENT_ONE;
+  }
+
+  void decreaseIndent () {
+    this.indent = this.indent.substring(2);
   }
 }

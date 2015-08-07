@@ -107,7 +107,8 @@ class Transducer {
     }
   }
 
-  void setComputeInfo (byte computeType, float value, Memory memory) {
+  void setInPortComputeInfo (byte computeType,
+                             String value, Memory memory) {
     for (int i = 0; i < this.inPortIds.length; i++) {
       this.getPort(this.inPortIds[i]).setComputeInfo(computeType,
                                                      value, i,
@@ -115,14 +116,21 @@ class Transducer {
     }
   }
   
-  void setComputeInfo (byte computeType, float value) {
+  void setInPortComputeInfo (byte computeType, String value) {
     for (int i = 0; i < this.inPortIds.length; i++) {
       this.getPort(this.inPortIds[i]).setComputeInfo(computeType,
                                                      value, i);
     }
   }
 
-  void setComputeInfo (byte computeType) {
+  void setOutPortComputeInfo (byte computeType, String value) {
+    for (int i = 0; i < this.outPortIds.length; i++) {
+      this.getPort(this.outPortIds[i]).setComputeInfo(computeType,
+                                                      value, i);
+    }
+  }
+
+  void setInPortComputeInfo (byte computeType) {
     for (int i = 0; i < this.inPortIds.length; i++) {
       this.getPort(this.inPortIds[i]).setComputeInfo(computeType, i);
     }

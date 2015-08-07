@@ -13,8 +13,9 @@ class Port {
 
   // for computation
   byte computeType;
-  float value;                  // valid only for COMPUTE_K and
-                                // COMPUTE_CHOOSE
+  String value;                 // valid for COMPUTE_K,
+                                // COMPUTE_CHOOSE, COMPUTE_TERM_IN and
+                                // COMPUTE_TERM_OUT 
   int portIndex;
   Memory memory;
   
@@ -27,6 +28,7 @@ class Port {
     this.name = name;
     this.computeType = COMPUTE_NOP;
     this.memory = null;
+    this.termName = null;
   }
 
   Port (float x, float y, boolean visible) {
@@ -41,15 +43,16 @@ class Port {
     this(x, y, VISIBLE, null);
   }
 
-  void setComputeInfo (byte computeType, float value, int portIndex,
-                       Memory memory) {
+  void setComputeInfo (byte computeType, String value,
+                       int portIndex, Memory memory) {
     this.computeType = computeType;
     this.value = value;
     this.portIndex = portIndex;
     this.memory = memory;
   }
   
-  void setComputeInfo (byte computeType, float value, int portIndex) {
+  void setComputeInfo (byte computeType, String value,
+                       int portIndex) {
     this.computeType = computeType;
     this.value = value;
     this.portIndex = portIndex;
@@ -122,12 +125,15 @@ class Port {
     }
   }
 
-  boolean setNextPort (Token token) {
-    addLog(token.copyIndex.prettyPrint() + ", "
+  String addPortLog (Token token) {
+    addLog(token.indent + "{" + token.copyIndex.prettyPrint() + "} "
            + token.data.prettyPrint() + " at "
            + token.portId + "("
            + printComputeType(this.computeType) + ":" + this.portIndex
            + ")");
+  }
+  
+  boolean setNextPort (Token token) {
     String errMsgIndex =
       "error getNextPortId: invalid portIndex "
       + this.portIndex + " for "
@@ -142,6 +148,7 @@ class Port {
       + printComputeType(this.computeType) + ": " + this.portIndex;
     switch (this.computeType) {
     case COMPUTE_U:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.copyIndex.isPair()) {
@@ -158,6 +165,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_V:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair()) {
@@ -174,6 +182,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_PHI:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         token.data = droit(token.data);
@@ -188,6 +197,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_PSI:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isDroit()) {
@@ -207,6 +217,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_E:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         token.data = pair(fromInt(0), token.data);
@@ -217,6 +228,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_E_PRIME:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair()) {
@@ -232,6 +244,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_D:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair() && token.copyIndex.isPair()) {
@@ -253,6 +266,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_D_PRIME:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair() && fst(token.data).isPair()) {
@@ -270,6 +284,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_C:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair()) {
@@ -294,6 +309,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_C_PRIME:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair() && fst(token.data).isDroit()) {
@@ -316,6 +332,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_W:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         console.log("token absorbed!");
@@ -325,6 +342,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_W_PRIME:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         console.log("where are you from?");
@@ -334,6 +352,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_H:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         token.data = droit(droit(token.data));
@@ -363,6 +382,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_K:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         token.data = pair(fst(token.data), fromInt(int(this.value)));
@@ -373,6 +393,7 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_SUM:
+      this.addPortLog(token);
       switch (this.portIndex) {
       case 0:
         if (token.data.isPair()) {
@@ -402,27 +423,30 @@ class Port {
         return TERMINATE;
       }
     case COMPUTE_CHOOSE:
+      this.addPortLog(token);
       if (this.memory.isDefault(token.copyIndex)) {
         float rand = random(0,1);
-        if (rand > this.value) {
-          addLog("probabilistic choice ("
-                 + this.value + ") RIGHT");
-          console.log("probabilistic choice ("
-                      + this.value + ") RIGHT");
+        if (rand > float(this.value)) {
+          addLog(token.indent + "==== PROBABILISTIC CHOICE ("
+                 + this.value + ") RIGHT ====");
+          console.log(token.indent + "==== PROBABILISTIC CHOICE ("
+                      + this.value + ") RIGHT ====");
           this.memory.update(token.copyIndex, STATE_RIGHT);
           token.setNextPort(this.nextPortIds[0], this.paths[0]);
           return CONTINUE;      // go to right
         } else {
-          addLog("probabilistic choice ("
-                 + this.value + ") LEFT");
-          console.log("probabilistic choice ("
-                      + this.value + ") LEFT");
+          addLog(token.indent + "==== PROBABILISTIC CHOICE ("
+                 + this.value + ") LEFT ====");
+          console.log(token.indent + "==== PROBABILISTIC CHOICE ("
+                      + this.value + ") LEFT ====");
           this.memory.update(token.copyIndex, STATE_LEFT);
           token.setNextPort(this.nextPortIds[1], this.paths[1]);
           return CONTINUE;      // go to left
         }
       } else {
-        if (this.memory.lookup(token.copyIndex) == STATE_RIGHT) {
+        boolean state = this.memory.lookup(token.copyIndex);
+        addLog(token.indent + "==== " + printState(state) + " ====");
+        if (state == STATE_RIGHT) {
           token.setNextPort(this.nextPortIds[0], this.paths[0]);
           return CONTINUE;      // go to right
         } else {
@@ -430,10 +454,32 @@ class Port {
           return CONTINUE;      // go to left
         }
       }
-    case COMPUTE_TERM: case COMPUTE_NOP:
+    case COMPUTE_TERM_IN:
+      this.addPortLog(token);
+      if (this.name != null)
+        addLog(token.indent
+               + "enter " + this.value + " at port " + this.name);
+      else
+        addLog(token.indent + "enter " + this.value);
+      token.increaseIndent();
+      token.setNextPort(this.nextPortIds[0], this.paths[0]);
+      return CONTINUE;
+    case COMPUTE_TERM_OUT:
+      token.decreaseIndent();
+      if (this.name != null)
+        addLog(token.indent
+               + "exit " + this.value + " at port " + this.name);
+      else
+        addLog(token.indent + "exit " + this.value);
+      this.addPortLog(token);
+      token.setNextPort(this.nextPortIds[0], this.paths[0]);
+      return CONTINUE;
+    case COMPUTE_NOP:
+      this.addPortLog(token);
       token.setNextPort(this.nextPortIds[0], this.paths[0]);
       return CONTINUE;
     case COMPUTE_END:
+      this.addPortLog(token);
       token.x = this.x;
       token.y = this.y;
       return TERMINATE;
@@ -461,10 +507,11 @@ byte COMPUTE_W_PRIME = 11;
 byte COMPUTE_H = 12;
 byte COMPUTE_K = 13;
 byte COMPUTE_SUM = 14;
-byte COMPUTE_TERM = 15;
-byte COMPUTE_CHOOSE = 16;
-byte COMPUTE_NOP = 17;
-byte COMPUTE_END = 18;
+byte COMPUTE_TERM_IN = 15;
+byte COMPUTE_TERM_OUT = 16;
+byte COMPUTE_CHOOSE = 17;
+byte COMPUTE_NOP = 18;
+byte COMPUTE_END = 19;
 
 String printComputeType (byte computeType) {
   switch (computeType) {
@@ -483,7 +530,8 @@ String printComputeType (byte computeType) {
   case COMPUTE_H: return "H";
   case COMPUTE_K: return "K";
   case COMPUTE_SUM: return "SUM";
-  case COMPUTE_TERM: return "TERM";
+  case COMPUTE_TERM_IN: return "TERM_IN";
+  case COMPUTE_TERM_OUT: return "TERM_OUT";
   case COMPUTE_CHOOSE: return "CHOOSE";
   case COMPUTE_NOP: return "NOP";
   case COMPUTE_END: return "END";

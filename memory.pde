@@ -3,6 +3,11 @@
 boolean STATE_RIGHT = true;
 boolean STATE_LEFT = false;
 
+String printState (boolean stateRight) {
+  if (stateRight) return "STATE RIGHT";
+  else return "STATE LEFT";
+}
+
 class Memory {
   HashMap hm;                   // associate list with strings as keys
 

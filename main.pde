@@ -163,3 +163,5 @@ float TOKEN_DIAMETER = UNIT_LENGTH;
 float TOKEN_SPEED = UNIT_LENGTH;
 
 int FRAME_BY_FRAME_SEC = 1;
+
+String INDENT_ONE = "  ";       // 2 white spaces

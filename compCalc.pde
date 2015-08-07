@@ -17,7 +17,7 @@ Transducer primH (float portInterval) {
   td.connectPorts(inLeft, {outRight, outLeft});
   td.setInPortIds({inRight, inLeft});
   td.setOutPortIds({outRight, outLeft});
-  td.setComputeInfo(COMPUTE_H);
+  td.setInPortComputeInfo(COMPUTE_H);
   return td;
 }
 
@@ -33,7 +33,7 @@ Transducer primK (String value) {
   td.connectPorts(inn, {out});
   td.setInPortIds({inn});
   td.setOutPortIds({out});
-  td.setComputeInfo(COMPUTE_K, float(value));
+  td.setInPortComputeInfo(COMPUTE_K, float(value));
   return td;
 }
 
@@ -60,7 +60,7 @@ Transducer primSum (float portInterval) {
   td.connectPorts(inLeft, {outRight});
   td.setInPortIds({inRight, inCenter, inLeft});
   td.setOutPortIds({outRight, outCenter, outLeft});
-  td.setComputeInfo(COMPUTE_SUM);
+  td.setInPortComputeInfo(COMPUTE_SUM);
   return td;
 }
 
@@ -1175,7 +1175,7 @@ Transducer addChoiceBox (float prob,
   leftTd.inPortIds = newInPortIds;
   leftTd.outPortIds = newOutPortIds;
   Memory memory = new Memory();
-  leftTd.setComputeInfo(COMPUTE_CHOOSE, prob, memory);
+  leftTd.setInPortComputeInfo(COMPUTE_CHOOSE, prob, memory);
   return leftTd;
 }
 
@@ -1276,6 +1276,7 @@ Transducer addTermBox (String term, String[] portNames,
     td.replaceInPortId(i, inn);
     td.replaceOutPortId(i, out);
   }
-  td.setComputeInfo(COMPUTE_TERM);
+  td.setInPortComputeInfo(COMPUTE_TERM_IN, term);
+  td.setOutPortComputeInfo(COMPUTE_TERM_OUT, term);
   return td;
 }
