@@ -25,14 +25,16 @@ function goReady () { State = STATE_READY; }
 
 function goRun () {
     clearLog();
-    addConsole("run");
     var sButton = document.getElementById("startButton");
-    if (sButton.alt = "start")
+    if (sButton.alt == "start") {
+	addConsole("start");
 	blinkButton(sButton,
 		    "icons/startOn.png", "icons/restart.png");
-    else
+    } else {
+	addConsole("restart");
 	blinkButton(sButton,
 		    "icons/restartOn.png", "icons/restart.png");
+    }
     sButton.alt = "restart";
     sButton.title = "restart";
     var prButton = document.getElementById("pauseResumeButton");
