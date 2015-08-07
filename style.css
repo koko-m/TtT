@@ -38,16 +38,22 @@ input#term {
 
 input#speedRange {
     width: 20%;
+    height: 12px;
     vertical-align: middle;
 }
 
 input#speedNum {
     width: 3em;
-    vertical-align: middle;
+    height: 10px;
+    padding: 2px;
 }
 
 span#speed {
     white-space: nowrap;
+    padding: 2px;
+    border: 2.5px solid #292d24;
+    border-radius: 2px;
+    vertical-align: middle;
 }
 
 input.buttonOnImg {
