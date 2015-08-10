@@ -31,6 +31,11 @@ class Transducer {
     return this.boxes.length - 1; // box id
   }
 
+  int addBoxHead (Box newBox) {
+    this.boxes = concat({newBox}, this.boxes);
+    return 0;                   // box id
+  }
+
   void connectPorts (int sourcePortId,
                      int[] targetPortIds, float[][] paths) {
     this.ports[sourcePortId].addNextPortIds(targetPortIds, paths);

@@ -1156,6 +1156,21 @@ Transducer addChoiceBox (float prob,
       out =
         leftTd.addPort(new Port(leftTd.getPort(leftTd.inPortIds[i]).x,
                                 -leftTd.tdHalfHeight));
+      leftTd.connectPorts(inn,
+                          {leftTd.inPortIds[i],
+                              leftTd.inPortIds[i + numIOPorts]},
+                          {{}, {leftTd
+                                .getPort(leftTd
+                                         .inPortIds[i + numIOPorts])
+                                .x,
+                                leftTd.tdHalfHeight}});
+      leftTd.connectPorts(leftTd.outPortIds[i], {out});
+      leftTd.connectPorts(leftTd.outPortIds[i + numIOPorts], {out},
+                          {{leftTd.
+                                getPort(leftTd.
+                                        outPortIds[i + numIOPorts])
+                                .x,
+                                -leftTd.tdHalfHeight}});
     } else {                    // leftmost ports
       inn =
         leftTd.addPort
@@ -1165,12 +1180,16 @@ Transducer addChoiceBox (float prob,
         leftTd.addPort
         (new Port(leftTd.getPort(leftTd.inPortIds[i + numIOPorts]).x,
                                 -leftTd.tdHalfHeight));
+      leftTd.connectPorts(inn,
+                          {leftTd.inPortIds[i],
+                              leftTd.inPortIds[i + numIOPorts]},
+                          {{leftTd.getPort(leftTd.inPortIds[i]).x,
+                                leftTd.tdHalfHeight}, {}});
+      leftTd.connectPorts(leftTd.outPortIds[i], {out},
+                          {{leftTd.getPort(leftTd.outPortIds[i]).x,
+                                -leftTd.tdHalfHeight}});
+      leftTd.connectPorts(leftTd.outPortIds[i + numIOPorts], {out});
     }
-    leftTd.connectPorts(inn,
-                        {leftTd.inPortIds[i],
-                            leftTd.inPortIds[i + numIOPorts]});
-    leftTd.connectPorts(leftTd.outPortIds[i], {out});
-    leftTd.connectPorts(leftTd.outPortIds[i + numIOPorts], {out});
     leftTd.getPort(leftTd.outPortIds[i]).hide();
     leftTd.getPort(leftTd.outPortIds[i + numIOPorts]).hide();
     newInPortIds = append(newInPortIds, inn);
@@ -1246,10 +1265,10 @@ Transducer addBangBox (Transducer td) {
   td.shiftX(UNIT_LENGTH);
   td.tdWidth += UNIT_LENGTH * 2;
   td.tdHalfHeight = boxBottomY;
-  td.addBox(new Box(DASHED_RECT, {},
-                    0, td.tdHalfHeight - boxHeight / 2,
-                    td.tdWidth,
-                    (td.tdHalfHeight - boxHeight / 2) * 2));
+  td.addBoxHead(new Box(DASHED_RECT, {},
+                        0, td.tdHalfHeight - boxHeight / 2,
+                        td.tdWidth,
+                        (td.tdHalfHeight - boxHeight / 2) * 2));
   return td;
 }
 
