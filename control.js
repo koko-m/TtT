@@ -17,7 +17,6 @@ function goIdle () {
     prButton.title = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = true;
-    document.getElementById("skipButton").disabled = true;
     State = STATE_IDLE;
 }
 
@@ -43,7 +42,6 @@ function goRun () {
     prButton.title = "pause";
     prButton.onclick = new Function("goPause();");
     prButton.disabled = false;
-    document.getElementById("skipButton").disabled = false;
     State = STATE_RUN;
 }
 
@@ -56,7 +54,6 @@ function goPause () {
 	prButton.alt = "resume";
 	prButton.title = "resume";
 	prButton.onclick = new Function("goResume();");
-	document.getElementById("skipButton").disabled = true;
 	State = STATE_PAUSE;
 	break;
     default: break;
@@ -72,7 +69,6 @@ function goResume () {
 	prButton.alt = "pause";
 	prButton.title = "pause";
 	prButton.onclick = new Function("goPause();");
-	document.getElementById("skipButton").disabled = false;
 	State = STATE_RUN;
 	break;
     default: break;
@@ -114,35 +110,73 @@ function changeSpeedN () {
 
 // modes of animation
 
-var frameByframe = false;
+var MODE_NORMAL = 0;
+var MODE_SKIP = 1;
+var MODE_FBF = 2;		// frame by frame
 
-function isFrameByFrameMode () { return frameByframe; }
+var Mode = MODE_NORMAL;
 
-function toggleFrameByFrame () {
-    frameByframe = !frameByframe;
-    var fbfSwitch = document.getElementById("FbFSwitch");
-    if (frameByframe) {
-	addConsole("frame-by-frame mode on");
-	fbfSwitch.className = "buttonOnImg";
-	fbfSwitch.src = "icons/fbfOn.png";
-    } else {
+function getMode () { return Mode; }
+
+function goSkip () {
+    var skipSwitch = document.getElementById("skipSwitch");
+    switch (Mode) {
+    case MODE_NORMAL:		// skip mode on
+	addConsole("skip mode on");
+	skipSwitch.className = "buttonOnImg";
+	skipSwitch.src = "icons/skipOn.png";
+	Mode = MODE_SKIP;
+	break;
+    case MODE_SKIP:		// skip mode off
+	addConsole("skip mode off");
+	skipSwitch.className = "buttonOffImg";
+	skipSwitch.src = "icons/skip.png";
+	Mode = MODE_NORMAL;
+	break;
+    case MODE_FBF:		// frame-by-frame mode off
+                                // skip mode on
+	var fbfSwitch = document.getElementById("FbFSwitch");
 	addConsole("frame-by-frame mode off");
 	fbfSwitch.className = "buttonOffImg";
 	fbfSwitch.src = "icons/fbf.png";
+	addConsole("skip mode on");
+	skipSwitch.className = "buttonOnImg";
+	skipSwitch.src = "icons/skipOn.png";
+	Mode = MODE_SKIP;
+	break;
     }
 }
 
-var skipFlag = false;
-
-function toSkip () { return skipFlag; }
-
-function skipped () { skipFlag = false; }
-
-function skip () {
-    blinkButton(document.getElementById("skipButton"),
-		"icons/skipOn.png", "icons/skip.png");
-    skipFlag = true;
+function goFbF () {
+    var fbfSwitch = document.getElementById("FbFSwitch");
+    switch (Mode) {
+    case MODE_NORMAL:		// frame-by-frame mode on
+	addConsole("frame-by-frame mode on");
+	fbfSwitch.className = "buttonOnImg";
+	fbfSwitch.src = "icons/fbfOn.png";
+	Mode = MODE_FBF;
+	break;
+    case MODE_SKIP:		// skip mode off
+                                // frame-by-frame mode on
+	var skipSwitch = document.getElementById("skipSwitch");
+	addConsole("skip mode off");
+	skipSwitch.className = "buttonOffImg";
+	skipSwitch.src = "icons/skip.png";
+	addConsole("frame-by-frame mode on");
+	fbfSwitch.className = "buttonOnImg";
+	fbfSwitch.src = "icons/fbfOn.png";
+	Mode = MODE_FBF;
+	break;
+    case MODE_FBF:		// frame-by-frame mode off
+	addConsole("frame-by-frame mode off");
+	fbfSwitch.className = "buttonOffImg";
+	fbfSwitch.src = "icons/fbf.png";
+	Mode = MODE_NORMAL;
+	break;
+    }
 }
+
+// clear zoom/move (centering)
 
 var centerFlag = false;
 

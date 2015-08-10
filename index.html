@@ -47,12 +47,12 @@ onclick="translateTerm();">
 <input id="pauseResumeButton" type="image" class="buttonOffImg"
 src="icons/pause.png" alt="pause" title="pause"
 onclick="goPause();" disabled>
-<input id="skipButton" type="image" class="buttonOffImg"
-src="icons/skip.png" alt="skip" title="skip"
-onclick="skip();" disabled>
+<input id="skipSwitch" type="image" class="buttonOffImg"
+src="icons/skip.png" alt="skip" title="toggle skip mode"
+onclick="goSkip();">
 <input id="FbFSwitch" type="image" class="buttonOffImg"
 src="icons/fbf.png" alt="frame-by-frame" title="toggle frame-by-frame mode"
-onclick="toggleFrameByFrame();">
+onclick="goFbF();">
 
 <span id="speed" title="speed (%)">
 <input id="speedRange" type="range"

@@ -159,7 +159,8 @@ class Transducer {
   
   boolean run () {
     boolean terminate = false;
-    if (toSkip()) {
+    switch (getMode()) {
+    case MODE_SKIP:
       this.token.distance = 0;
       this.token.put();
       terminate =
@@ -169,30 +170,31 @@ class Transducer {
                + decodeNatAnswer(this.token.data).prettyPrint()
                + " in copy " + this.token.copyIndex.prettyPrint());
       }
-      skipped();
       return terminate;
-    }
-    if (isFrameByFrameMode()
-        && FrameByFrameCounter <= FRAME_BY_FRAME_SEC * frameRate) {
-      FrameByFrameCounter++;
-      return terminate;
-    }
-    FrameByFrameCounter = 0;
-    this.token.step();
-    while (this.token.distance < 0) {
-      this.token.updatePointIndex();
-      if (this.token.distance >= 0) break;
-      terminate =
-        this.getPort(this.token.portId).setNextPort(this.token);
-      if (terminate) {
-        addLog("Result: "
-               + decodeNatAnswer(this.token.data).prettyPrint()
-               + " in copy " + this.token.copyIndex.prettyPrint());
-        break;
+    case MODE_FBF:
+      if (FrameByFrameCounter <= FRAME_BY_FRAME_SEC * frameRate) {
+        FrameByFrameCounter++;
+        return terminate;
       }
+      // no break
+    case MODE_NORMAL:
+      FrameByFrameCounter = 0;
+      this.token.step();
+      while (this.token.distance < 0) {
+        this.token.updatePointIndex();
+        if (this.token.distance >= 0) break;
+        terminate =
+          this.getPort(this.token.portId).setNextPort(this.token);
+        if (terminate) {
+          addLog("Result: "
+                 + decodeNatAnswer(this.token.data).prettyPrint()
+                 + " in copy " + this.token.copyIndex.prettyPrint());
+          break;
+        }
+      }
+      if (!terminate) this.token.put();
+      return terminate;
     }
-    if (!terminate) this.token.put();
-    return terminate;
   }
   
   void drawAll (float mouseTransformedX, float mouseTransformedY) {
