@@ -12,6 +12,21 @@ a:visited {
     text-decoration: underline;
 }
 
+h1 a:link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+h1 a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+h1 a:visited {
+    color: #ffffff;
+    text-decoration: none;
+}
+
 body {
     font-family: Arial,Helvetica,sans-serif;
     color: #292d24;
@@ -81,7 +96,7 @@ input.buttonOffImg {
 textarea#consoleArea {
     margin: 0px;
     padding: 0px;
-    width: 24%;
+    width: 23%;
     height: 10%;
     margin-bottom: 1%;
     resize: none;
@@ -91,7 +106,7 @@ textarea#consoleArea {
 textarea#logArea {
     margin: 0px;
     padding: 0px;
-    width: 24%;
+    width: 23%;
     height: 88%;
     resize: none;
     clear: right;
