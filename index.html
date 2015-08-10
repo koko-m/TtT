@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <title>TtT</title>
 <link rel="stylesheet" type="text/css" href="style.css">
-<script type="text/javascript" src="processing.js"></script>
-<script type="text/javascript" src="peg-0.8.0.min.js"></script>
-<script type="text/javascript" src="control.js"></script>
-<script type="text/javascript" src="grammar.js"></script>
-<script type="text/javascript" src="parse.js"></script>
-<script type="text/javascript" src="textarea.js"></script>
+<script type="text/javascript" src="lib/processing.js"></script>
+<script type="text/javascript" src="lib/peg-0.8.0.min.js"></script>
+<script type="text/javascript" src="js/control.js"></script>
+<script type="text/javascript" src="js/grammar.js"></script>
+<script type="text/javascript" src="js/translate.js"></script>
+<script type="text/javascript" src="js/textarea.js"></script>
 </head>
 
 <body>
@@ -67,7 +67,7 @@ onclick="center();">
 </p>
 
 <!-- <p id="middleBlock"> -->
-<canvas id="canvas" datasrc="main.pde transducer.pde port.pde box.pde compCalc.pde goiInterpret.pde token.pde nat.pde memory.pde">
+<canvas id="canvas" datasrc="pjs/main.pjs pjs/transducer.pjs pjs/port.pjs pjs/box.pjs pjs/compCalc.pjs pjs/goiInterpret.pjs pjs/token.pjs pjs/nat.pjs pjs/memory.pjs">
 Sorry, please try another browser that supports Canvas :(
 </canvas>
 <!-- </p> -->
