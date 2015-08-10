@@ -445,7 +445,8 @@ class Port {
         }
       } else {
         boolean state = this.memory.lookup(token.copyIndex);
-        addLog(token.indent + "==== " + printState(state) + " ====");
+        addLog(token.indent + "==== STATE "
+               + printState(state) + " ====");
         if (state == STATE_RIGHT) {
           token.setNextPort(this.nextPortIds[0], this.paths[0]);
           return CONTINUE;      // go to right

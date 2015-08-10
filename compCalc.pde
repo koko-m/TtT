@@ -1138,9 +1138,13 @@ Transducer addChoiceBox (float prob,
   leftTd.shiftX(UNIT_LENGTH);
   leftTd.tdWidth += UNIT_LENGTH * 2;
   leftTd.tdHalfHeight += UNIT_LENGTH;
-  leftTd.addBoxHead(new Box(CHOOSE_RECT, {label}, labelCenterX,
-                            0, leftTd.tdHalfHeight,
-                            leftTd.tdWidth, leftTd.tdHalfHeight * 2));
+  Memory memory = new Memory();
+  leftTd.addBox(new Box(CHOOSE_RECT, {label}, labelCenterX,
+                        0, leftTd.tdHalfHeight,
+                        leftTd.tdWidth, leftTd.tdHalfHeight * 2,
+                        memory));
+  // it is important to add a box to the last so that showing memories
+  // works well if choose operations are nested 
   Port[] newInPortIds = new Port[0];
   Port[] newOutPortIds = new Port[0];
   for (i = 0; i < numIOPorts; i++) {
@@ -1174,7 +1178,6 @@ Transducer addChoiceBox (float prob,
   }
   leftTd.inPortIds = newInPortIds;
   leftTd.outPortIds = newOutPortIds;
-  Memory memory = new Memory();
   leftTd.setInPortComputeInfo(COMPUTE_CHOOSE, prob, memory);
   return leftTd;
 }
@@ -1243,10 +1246,10 @@ Transducer addBangBox (Transducer td) {
   td.shiftX(UNIT_LENGTH);
   td.tdWidth += UNIT_LENGTH * 2;
   td.tdHalfHeight = boxBottomY;
-  td.addBoxHead(new Box(DASHED_RECT, {},
-                        0, td.tdHalfHeight - boxHeight / 2,
-                        td.tdWidth,
-                        (td.tdHalfHeight - boxHeight / 2) * 2));
+  td.addBox(new Box(DASHED_RECT, {},
+                    0, td.tdHalfHeight - boxHeight / 2,
+                    td.tdWidth,
+                    (td.tdHalfHeight - boxHeight / 2) * 2));
   return td;
 }
 

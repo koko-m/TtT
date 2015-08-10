@@ -62,9 +62,21 @@ void drawZoomedTd () {
   translate(OriginRelativeX, OriginRelativeY);
 
   translate(0, height / 2);
-  scale(min(width / Td.tdWidth, height / (Td.tdHalfHeight * 2)));
-  Td.drawAll();               // draw port ids as well
-  // Td.draw();                  // not draw port ids
+  float scaleTdValue =
+    min(width / Td.tdWidth, height / (Td.tdHalfHeight * 2));
+  scale(scaleTdValue);
+
+  float mouseTransformedX =
+    ((mouseX - ZoomX) / ScaleValue - OriginRelativeX)
+    / scaleTdValue;
+  float mouseTransformedY =
+    ((mouseY - ZoomY) / ScaleValue - OriginRelativeY - height / 2)
+    / scaleTdValue;
+  
+  Td.drawAll(mouseTransformedX, mouseTransformedY);
+  // // draw port ids as well
+  // Td.draw(mouseTransformedX, mouseTransformedY);
+  // // not draw port ids
   popMatrix();
 }
 
@@ -79,7 +91,7 @@ void clearZoom () {
 boolean over = false;
 
 void mouseOver () {
-  cursor(HAND);
+  cursor(MOVE);
   over = true;
 }
 void mouseOut () {
@@ -119,7 +131,7 @@ boolean dragging = false;
 void mouseDragged () {
   if (over) {
     dragging = true;
-    cursor(CROSS);
+    // cursor(CROSS);
     OriginRelativeX += (mouseX - pmouseX) / ScaleValue;
     OriginRelativeY += (mouseY - pmouseY) / ScaleValue;
   }
@@ -127,8 +139,8 @@ void mouseDragged () {
 
 void mouseReleased () {
   if (dragging) {
-    if (over) cursor(HAND);
-    else cursor(ARROW);
+    // if (over) cursor(HAND);
+    // else cursor(ARROW);
     dragging = false;
   }
 }
@@ -156,6 +168,7 @@ int TEXT_SIZE_PORT = 10;
 int TEXT_SIZE_TERM = 12;
 int TEXT_SIZE_DEBUG = 10;
 int TEXT_SIZE_TOKEN = 10;
+int TEXT_SIZE_MEMORY = 10;
 int TEXT_MARGIN = UNIT_LENGTH / 2;
 
 float DASHED_LINE_ON_INERVAL = 4;

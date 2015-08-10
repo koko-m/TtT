@@ -1,6 +1,36 @@
 rectMode(CENTER);               // specify the center point to draw
                                 // a rectangle
 
+class MemBox {
+  float centerX;
+  float topY;
+  float memBoxWidth;
+  float memBoxHeight;
+  String memPrinted;
+
+  MemBox (float centerX, float topY,
+          float memBoxWidth, float memBoxHeight, String memPrinted) {
+    this.centerX = centerX;
+    this.topY = topY;
+    this.memBoxWidth = memBoxWidth;
+    this.memBoxHeight = memBoxHeight;
+    this.memPrinted = memPrinted;
+  }
+
+  void draw () {
+    float centerY = this.topY + this.memBoxHeight / 2;
+    stroke(#ff0000);
+    strokeWeight(2);
+    fill(#ffffff);
+    rect(this.centerX, centerY, this.memBoxWidth, this.memBoxHeight);
+    strokeWeight(1);            // restore default value
+    fill(#ff0000);
+    textAlign(CENTER, CENTER);
+    textSize(TEXT_SIZE_MEMORY);
+    text(this.memPrinted, this.centerX, centerY);
+  }
+}
+
 // types of boxes (8 bits)
 byte LABELED_RECT_ONE = 0;      // h, k_n, sum
 byte LABELED_RECT_PAIR = 1;     // retractions except for phi & psi
@@ -18,9 +48,11 @@ class Box {
   float bottomY;
   float boxWidth;
   float boxHeight;
+  Memory memory;
 
   Box (byte type, String[] labels, float labelCenterX,
-       float leftX, float bottomY, float boxWidth, float boxHeight) {
+       float leftX, float bottomY, float boxWidth, float boxHeight,
+       Memory memory) {
     this.type = type;
     this.labels = labels;
     this.labelCenterX = labelCenterX;
@@ -28,12 +60,13 @@ class Box {
     this.bottomY = bottomY;
     this.boxWidth = boxWidth;
     this.boxHeight = boxHeight;
+    this.memory = memory;
   }
 
   Box (byte type, String[] labels,
        float leftX, float bottomY, float boxWidth, float boxHeight) {
     this(type, labels, leftX + boxWidth / 2,
-         leftX, bottomY, boxWidth, boxHeight);
+         leftX, bottomY, boxWidth, boxHeight, null);
   }
 
   void shiftX (float shiftX) {
@@ -41,7 +74,10 @@ class Box {
     this.labelCenterX += shiftX;
   }
 
-  void draw () {
+  MemBox draw (float mouseTransformedX, float mouseTransformedY,
+               MemBox memBox) {
+    // draw specified box(es) immediately
+    // show memories afterwards by storing data in memBox
     float centerX = this.leftX + this.boxWidth / 2;
     float centerY = this.bottomY - this.boxHeight / 2;
     switch (this.type) {
@@ -53,7 +89,7 @@ class Box {
       textAlign(CENTER, CENTER);
       textSize(TEXT_SIZE_LABEL);
       text(this.labels[0], centerX, centerY);
-      break;
+      return memBox;
     case LABELED_RECT_PAIR:
       stroke(#000000);
       fill(#ffffff);
@@ -64,7 +100,7 @@ class Box {
       textSize(TEXT_SIZE_LABEL);
       text(labels[0], centerX, centerY); // lower
       text(labels[1], centerX, -centerY); // upper
-      break;
+      return memBox;
     case TRI_PAIR_JOIN:
       stroke(#000000);
       fill(#ffffff);
@@ -76,7 +112,7 @@ class Box {
                this.leftX, -this.bottomY + this.boxHeight,
                this.leftX + this.boxWidth,
                -this.bottomY + this.boxHeight); // upper
-      break;
+      return memBox;
     case TRI_PAIR_SPLIT:
       stroke(#000000);
       fill(#ffffff);
@@ -86,7 +122,7 @@ class Box {
       triangle(centerX, -this.bottomY + this.boxHeight,
                this.leftX, -this.bottomY,
                this.leftX + this.boxWidth, -this.bottomY); // upper
-      break;
+      return memBox;
     case TERM_RECT:
       stroke(#ffffff);
       noFill();
@@ -99,7 +135,7 @@ class Box {
       rotate(HALF_PI);
       text(this.labels[0], 0, 0);
       popMatrix();
-      break;
+      return memBox;
     case DASHED_RECT:
       float x, y;
       boolean on;
@@ -144,19 +180,43 @@ class Box {
         on = !on;
       }
       endShape();
-      break;
-    case CHOOSE_RECT:
-      stroke(#000000);
-      strokeWeight(2);
-      // fill(#ffffff);
-      noFill();
-      rect(centerX, centerY, this.boxWidth, this.boxHeight);
-      strokeWeight(1);          // restore default value
-      fill(#000000);
-      textAlign(CENTER, CENTER);
-      textSize(TEXT_SIZE_PROB);
-      text(this.labels[0], this.labelCenterX, centerY);
-      break;
+      return memBox;
+    case CHOOSE_RECT:      
+      if (memBox == null
+          && mouseTransformedX >= this.leftX
+          && mouseTransformedX <= this.leftX + this.boxWidth
+          && mouseTransformedY >= this.bottomY - this.boxHeight
+          && mouseTransformedY <= this.bottomY) {
+        stroke(#ff0000);
+        strokeWeight(2);
+        noFill();
+        rect(centerX, centerY, this.boxWidth, this.boxHeight);
+        strokeWeight(1);        // restore default value
+        fill(#ff0000);
+        textAlign(CENTER, CENTER);
+        textSize(TEXT_SIZE_PROB);
+        text(this.labels[0], this.labelCenterX, centerY);
+
+        String memPrinted = this.memory.prettyPrint();
+        textSize(TEXT_SIZE_MEMORY);
+        return new MemBox(this.labelCenterX,
+                          centerY + TEXT_SIZE_PROB / 2 + TEXT_MARGIN,
+                          textWidth(memPrinted) + TEXT_MARGIN * 2,
+                          this.memory.memSize() * TEXT_SIZE_MEMORY
+                          + TEXT_MARGIN * 2,
+                          memPrinted);
+      } else {
+        stroke(#000000);
+        strokeWeight(2);
+        noFill();
+        rect(centerX, centerY, this.boxWidth, this.boxHeight);
+        strokeWeight(1);        // restore default value
+        fill(#000000);
+        textAlign(CENTER, CENTER);
+        textSize(TEXT_SIZE_PROB);
+        text(this.labels[0], this.labelCenterX, centerY);
+        return memBox;
+      }
     }
   }
 }

@@ -31,11 +31,6 @@ class Transducer {
     return this.boxes.length - 1; // box id
   }
 
-  int addBoxHead (Box newBox) {
-    this.boxes = concat({newBox}, this.boxes);
-    return 0;                   // box id
-  }
-
   void connectPorts (int sourcePortId,
                      int[] targetPortIds, float[][] paths) {
     this.ports[sourcePortId].addNextPortIds(targetPortIds, paths);
@@ -195,13 +190,21 @@ class Transducer {
     return terminate;
   }
   
-  void drawAll () {
-    this.draw();
+  void drawAll (float mouseTransformedX, float mouseTransformedY) {
+    this.draw(mouseTransformedX, mouseTransformedY);
     this.drawPorts();
   }
 
-  void draw () {
-    for (int i = 0; i < boxes.length; i++) this.boxes[i].draw();
+  void draw (float mouseTransformedX, float mouseTransformedY) {
+    MemBox memBox = null;
+    for (int i = 0; i < boxes.length; i++) {
+      memBox =
+        this.boxes[i].draw(mouseTransformedX, mouseTransformedY,
+                           memBox);
+    }
+    if (memBox != null) {
+      memBox.draw();
+    }
     for (int i = 0; i < ports.length; i++) {
       this.ports[i].drawName();
       this.ports[i].drawPaths();
