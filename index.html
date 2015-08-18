@@ -24,10 +24,15 @@
 </h1>
 
 <p id="topBlock">
+<img id="arrow" src="icons/arrow.png">
+Enter a term, or type &quot;;ex&quot; to select one from 11 examples.
+[<a href="https://github.com/koko-m/TtT/wiki">read documents</a>]
+<br>
+
 <input id="term" type="text"
 value="((lambda(x) (+ x x)) (choose(0.4) 3 5)) ;exSumChoose"
 size="100" autocomplete="on" list="examples"
-title="enter a term or type &quot;;ex&quot; to select one from 11 examples">
+title="enter a term, or type &quot;;ex&quot; to select one from 11 examples" autofocus>
 <datalist id="examples">
 <option value="(choose(0.4) 3 5) ;exChoose">
 <option value="(choose(0.7) (choose(0.4) 1 3) 5) ;exNestChoose">
@@ -66,10 +71,6 @@ min="20" max="400" step="20" value="100" oninput="changeSpeedN();">
 <input id="centerButton" type="image" class="buttonOffImg"
 src="icons/center.png" alt="center" title="clear zoom/move"
 onclick="center();">
-
-<br>
-Enter a term or type &quot;;ex&quot; to select one from 11 examples.
-[<a href="https://github.com/koko-m/TtT/wiki">read documents</a>]
 </p>
 
 <!-- <p id="middleBlock"> -->

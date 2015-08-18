@@ -47,6 +47,11 @@ h1#head {
     font-weight:normal;
 }
 
+img#arrow {
+    width: 12px;
+    height: 12px;
+}
+
 input#term {
     width: 45%;
 }
