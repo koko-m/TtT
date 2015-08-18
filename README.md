@@ -109,15 +109,41 @@ Characters after ';' are ignored.
   Lines like `==== STATE LEFT ====` indicate the current state
   `LEFT` is looked up.
 
-## References
-- Naohiko Hoshino, Koko Muroya and Ichiro Hasuo. **Memoryful Geometry
-of Interaction: from coalgebraic components to algebraic effects**. In
-CSL-LICS 2014.
-- Koko Muroya, Naohiko Hoshino and Ichiro Hasuo. **Memoryful GoI with
-recursion** (preliminary report). Short abstract presented at LOLA
-2015.
+## For More Information
 
-See also my webpage http://www-mmm.is.s.u-tokyo.ac.jp/~koko/ .
+### Developers
+
+- [Koko Muroya](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/)
+- [Toshiki Kataoka](http://www-mmm.is.s.u-tokyo.ac.jp/~tos/) for the
+  previous LOLA 2014 version
+
+### References
+- [Naohiko Hoshino](http://www.kurims.kyoto-u.ac.jp/~naophiko/),
+  [Koko Muroya](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/) and
+  [Ichiro Hasuo](http://www-mmm.is.s.u-tokyo.ac.jp/~ichiro/).
+  **Memoryful Geometry of Interaction: from coalgebraic components to
+  algebraic effects**. In CSL-LICS 2014.
+  [[acm](http://dl.acm.org/citation.cfm?doid=2603088.2603124)
+  | [preprint
+  pdf](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/papers/memGoI.pdf)]
+- [Koko Muroya](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/),
+  [Toshiki Kataoka](http://www-mmm.is.s.u-tokyo.ac.jp/~tos/),
+  [Ichiro Hasuo](http://www-mmm.is.s.u-tokyo.ac.jp/~ichiro/) and
+  [Naohiko Hoshino](http://www.kurims.kyoto-u.ac.jp/~naophiko/).
+  **Compiling effectful terms to transducers: prototype
+  implementation of memoryful Geometry of Interaction** (preliminary
+  report). Short abstract presented at LOLA 2014.
+  [[pdf](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/papers/TtTabst.pdf)]
+- [Koko Muroya](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/),
+  [Naohiko Hoshino](http://www.kurims.kyoto-u.ac.jp/~naophiko/) and
+  [Ichiro Hasuo](http://www-mmm.is.s.u-tokyo.ac.jp/~ichiro/).
+  **Memoryful GoI with recursion** (preliminary report). Short
+  abstract presented at LOLA 2015.
+  [[pdf](http://www-mmm.is.s.u-tokyo.ac.jp/~koko/papers/memGoIRecAbst.pdf)]
+
+### Special Thanks
+[Daisuke Sakamoto](http://daisukesakamoto.jp/en/) for his useful
+advice on visualization.
 
 ## License
 This tool is licensed under the MIT License.
