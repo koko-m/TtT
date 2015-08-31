@@ -25,7 +25,7 @@
 
 <p id="topBlock">
 <img id="arrow" src="icons/arrow.png">
-Enter a term, or type &quot;;ex&quot; to select one from 11 examples.
+Enter a term, or type &quot;;ex&quot; to select one from 13 examples.
 [<a href="https://github.com/koko-m/TtT/wiki">read documents</a>]
 <br>
 
@@ -44,8 +44,9 @@ title="enter a term, or type &quot;;ex&quot; to select one from 11 examples" aut
 <option value="((lambda(x) (choose(0.4) x (+ x x))) (choose(0.4) 3 5)) ;exFuncChoose">
 <option value="((lambda(f) (choose(0.4) (f 0) (f 1))) (lambda(x) (+ x x))) ;exHOFuncChoose">
 <option value="((lambda(f) (+ (f 0) (f 1))) (lambda(x) (choose(0.4) 3 5))) ;exNonTrivialMemory">
-<option value="((rec(flipLoop x) (match (choose(0.4) (inl *) (inr *)) ((inl
- y) x) ((inr z) (flipLoop x)))) *) ;exFlipUntilHead">
+<option value="((rec(loop x) (loop x)) 0) ;exNonTerminate">
+<option value="((rec(flipLoopAlg x) (choose(0.4) x (flipLoopAlg x))) 0) ;exFlipUntilHeadAlgEffect">
+<option value="((rec(flipLoopGen x) (match (choose(0.4) (inl *) (inr *)) ((inl y) x) ((inr z) (flipLoop x)))) *) ;exFlipUntilHeadGenEffect">
 </datalist>
 
 <input id="startButton" type="image" class="buttonOffImg"

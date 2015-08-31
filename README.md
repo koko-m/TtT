@@ -16,7 +16,7 @@ how a token moves around the diagram with updating information it
 carries.
 
 ## Usage
-1. Enter a term, or type ";ex" to select one from 11 examples.
+1. Enter a term, or type ";ex" to select one from 13 examples.
 2. Click the start button.
 
 A diagram can be zoomed by scrolling and moved by dragging.
