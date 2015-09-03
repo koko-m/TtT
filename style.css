@@ -53,12 +53,13 @@ img#arrow {
 }
 
 input#term {
-    width: 45%;
+    width: 74%;
+    font-size: 24pt;
 }
 
 input#speedRange {
     /* width: 20%; */
-    width: 150px;
+    width: 50px;
     height: 12px;
     vertical-align: middle;
 }
@@ -98,12 +99,12 @@ input.buttonOffImg {
     vertical-align: middle;
 }
 
-textarea#consoleArea {
+div#buttons {
     margin: 0px;
     padding: 0px;
     width: 23%;
     height: 10%;
-    margin-bottom: 1%;
+    margin-bottom: 2%;
     resize: none;
     float: right;
 }
@@ -112,10 +113,11 @@ textarea#logArea {
     margin: 0px;
     padding: 0px;
     width: 23%;
-    height: 88%;
+    height: 85%; /* 88%; */
     resize: none;
     clear: right;
     float: right;
+    font-size: 24pt;
 }
 
 canvas#canvas {

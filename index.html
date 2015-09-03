@@ -14,21 +14,39 @@
 
 <body>
 
-<textarea id="consoleArea" readonly>
-</textarea>
+<div id="buttons">
+<input id="startButton" type="image" class="buttonOffImg"
+src="icons/start.png" alt="start" title="start"
+onclick="translateTerm();">
+<input id="pauseResumeButton" type="image" class="buttonOffImg"
+src="icons/pause.png" alt="pause" title="pause"
+onclick="goPause();" disabled>
+<input id="skipSwitch" type="image" class="buttonOffImg"
+src="icons/skip.png" alt="skip" title="toggle skip mode"
+onclick="goSkip();">
+<input id="FbFSwitch" type="image" class="buttonOffImg"
+src="icons/fbf.png" alt="frame-by-frame" title="toggle frame-by-frame mode"
+onclick="goFbF();">
+<br><br>
+<span id="speed" title="speed (%)">
+<input id="speedRange" type="range"
+min="20" max="400" step="20" value="100" oninput="changeSpeedR();">
+<input id="speedNum" type="number"
+min="20" max="400" step="20" value="100" oninput="changeSpeedN();">
+</span>
+<input id="centerButton" type="image" class="buttonOffImg"
+src="icons/center.png" alt="center" title="clear zoom/move"
+onclick="center();">
+</div>
+
 <textarea id="logArea" wrap="off" readonly>
 </textarea>
 
 <h1 id="head">
- TtT (Terms to Transducers)
+ <!-- TtT (Terms to Transducers) -->
 </h1>
 
 <p id="topBlock">
-<img id="arrow" src="icons/arrow.png">
-Enter a term, or type &quot;;ex&quot; to select one from 13 examples.
-[<a href="https://github.com/koko-m/TtT/wiki">read documents</a>]
-<br>
-
 <input id="term" type="text"
 value="((lambda(x) (+ x x)) (choose(0.4) 3 5)) ;exSumChoose"
 size="100" autocomplete="on" list="examples"
@@ -48,30 +66,6 @@ title="enter a term, or type &quot;;ex&quot; to select one from 11 examples" aut
 <option value="((rec(flipLoopAlg x) (choose(0.4) x (flipLoopAlg x))) 0) ;exFlipUntilHeadAlgEffect">
 <option value="((rec(flipLoopGen x) (match (choose(0.4) (inl *) (inr *)) ((inl y) x) ((inr z) (flipLoop x)))) *) ;exFlipUntilHeadGenEffect">
 </datalist>
-
-<input id="startButton" type="image" class="buttonOffImg"
-src="icons/start.png" alt="start" title="start"
-onclick="translateTerm();">
-<input id="pauseResumeButton" type="image" class="buttonOffImg"
-src="icons/pause.png" alt="pause" title="pause"
-onclick="goPause();" disabled>
-<input id="skipSwitch" type="image" class="buttonOffImg"
-src="icons/skip.png" alt="skip" title="toggle skip mode"
-onclick="goSkip();">
-<input id="FbFSwitch" type="image" class="buttonOffImg"
-src="icons/fbf.png" alt="frame-by-frame" title="toggle frame-by-frame mode"
-onclick="goFbF();">
-
-<span id="speed" title="speed (%)">
-<input id="speedRange" type="range"
-min="20" max="400" step="20" value="100" oninput="changeSpeedR();">
-<input id="speedNum" type="number"
-min="20" max="400" step="20" value="100" oninput="changeSpeedN();">
-</span>
-
-<input id="centerButton" type="image" class="buttonOffImg"
-src="icons/center.png" alt="center" title="clear zoom/move"
-onclick="center();">
 </p>
 
 <!-- <p id="middleBlock"> -->
@@ -79,19 +73,6 @@ onclick="center();">
 Sorry, please try another browser that supports Canvas :(
 </canvas>
 <!-- </p> -->
-
-<p id="bottomBlock">
-This is a simulation tool of the
-<a href="http://dl.acm.org/citation.cfm?doid=2603088.2603124">
-<em>memoryful GoI</em></a>
-framework.<br>
-Implemented by
-<a href="http://www-mmm.is.s.u-tokyo.ac.jp/~koko/">
-Koko Muroya</a>,
-using
-<a href="http://processingjs.org/">Processing.js</a> v1.4.8 and
-<a href="http://pegjs.org/">PEG.js</a> v0.8.0.
-</p>
 
 </body>
 </html>

@@ -9,11 +9,11 @@ function addLog (txt) {
 }
 
 function clearConsole () {
-    var consoleArea = document.getElementById("consoleArea");
-    consoleArea.value = "";
+    // var consoleArea = document.getElementById("consoleArea");
+    // consoleArea.value = "";
 }
 
 function addConsole (txt) {
-    var consoleArea = document.getElementById("consoleArea");
-    consoleArea.value = txt + "\n" + consoleArea.value;
+    // var consoleArea = document.getElementById("consoleArea");
+    // consoleArea.value = txt + "\n" + consoleArea.value;
 }

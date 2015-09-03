@@ -214,17 +214,9 @@ function getCanvasHeight () {
     var topBlockMarginBottom = parseInt
     (window.getComputedStyle(document.getElementById("topBlock"),
 			     null).marginBottom);
-    // bottomBlock has margin-top only
-    var bottomBlockHeight =
-	document.getElementById("bottomBlock").clientHeight;
-    var bottomBlockMarginTop = parseInt
-    (window.getComputedStyle(document.getElementById("bottomBlock"),
-			     null).marginTop);
     return bodyHeight
 	- headPaddingTop
 	- headHeight - headPaddingBottom
 	- topBlockMarginTop
-	- topBlockHeight - topBlockMarginBottom
-	- bottomBlockMarginTop
-	- bottomBlockHeight;
+	- topBlockHeight - topBlockMarginBottom;
 }
