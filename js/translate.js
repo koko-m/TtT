@@ -47,33 +47,50 @@ var count = 0;
 function eliminateTermSum (parsedTerm) {
     if (parsedTerm.tag == "+") {
 	if (isEqual(parsedTerm.bodies[0], parsedTerm.bodies[1])) {
-	    var newVar = "C" + count;
-	    count++;
-	    var varSumFunc =
-		new Term("lambda", [newVar],
-			 [new Term("+1", [newVar], [])]);
-	    parsedTerm =
-		new Term("app", [],
-			 [varSumFunc,
-			  eliminateTermSum(parsedTerm.bodies[0])]);
+	    if (parsedTerm.bodies[0].tag == "var") {
+		parsedTerm =
+		    new Term("+1",
+			     [parsedTerm.bodies[0].parameters[0]],
+			     []);
+	    } else {
+		var newVar = "C" + count;
+		count++;
+		var varSumFunc =
+		    new Term("lambda", [newVar],
+			     [new Term("+1", [newVar], [])]);
+		parsedTerm =
+		    new Term("app", [],
+			     [varSumFunc,
+			      eliminateTermSum(parsedTerm.bodies[0])]);
+	    }
 	} else {
-	    var newVarLeft = "L" + count;
-	    count++;
-	    var newVarRight = "R" + count;
-	    count++;
-	    var varSumFunc =
-		new Term("lambda", [newVarLeft],
-			 [new Term("lambda", [newVarRight],
-				   [new Term("+2",
-					     [newVarLeft,
-					      newVarRight], [])])]);
-	    parsedTerm =
-		new Term("app", [],
-			 [new Term("app", [],
-				   [varSumFunc,
-				    eliminateTermSum
-				    (parsedTerm.bodies[0])]),
-			  eliminateTermSum(parsedTerm.bodies[1])]);
+	    if (parsedTerm.bodies[0].tag == "var"
+		&& parsedTerm.bodies[1].tag == "var") {
+		parsedTerm =
+		    new Term("+2",
+			     [parsedTerm.bodies[0].parameters[0],
+			      parsedTerm.bodies[1].parameters[0]],
+			     []);
+	    } else {
+		var newVarLeft = "L" + count;
+		count++;
+		var newVarRight = "R" + count;
+		count++;
+		var varSumFunc =
+		    new Term("lambda", [newVarLeft],
+			     [new Term("lambda", [newVarRight],
+				       [new Term("+2",
+						 [newVarLeft,
+						  newVarRight],
+						 [])])]);
+		parsedTerm =
+		    new Term("app", [],
+			     [new Term("app", [],
+				       [varSumFunc,
+					eliminateTermSum
+					(parsedTerm.bodies[0])]),
+			      eliminateTermSum(parsedTerm.bodies[1])]);
+	    }
 	}
     } else {
 	for (var i = 0; i < parsedTerm.bodies.length; i++) {
